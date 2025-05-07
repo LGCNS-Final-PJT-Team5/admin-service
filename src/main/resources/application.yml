@@ -31,3 +31,15 @@ eureka:
     fetch-registry: true
   instance:
     prefer-ip-address: true
+
+springdoc:
+  swagger-ui:
+    groups-oder: DESC
+    tags-sorter: alpha
+    operations-sorter: method
+  api-docs:
+    path: /api-docs
+  show-actuator: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  writer-with-default-pretty-printer: true
