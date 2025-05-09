@@ -3,6 +3,7 @@ package com.modive.adminservice.external.client.user;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -28,4 +29,13 @@ public interface UserClient {
      */
     @GetMapping("/user")
     CommonRes searchUser(@RequestParam String searchKeyword);
+
+    /**
+     * userId를 기반으로 사용자 상세 조회
+     *
+     * @param userId 유저ID
+     * @return CommonRes 형태의 상세 조회 결과 응답
+     */
+    @GetMapping("/user/{userId}")
+    CommonRes getUserDetail(@PathVariable Long userId);
 }

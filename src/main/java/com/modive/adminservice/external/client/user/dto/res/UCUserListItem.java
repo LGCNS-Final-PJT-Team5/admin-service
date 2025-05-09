@@ -1,9 +1,6 @@
 package com.modive.adminservice.external.client.user.dto.res;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 /**
  * 유저 서비스의
@@ -14,6 +11,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class UCUserListItem {

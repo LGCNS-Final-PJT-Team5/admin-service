@@ -79,4 +79,32 @@ public class UserController {
 
         return new ResponseEntity<>(res, HttpStatus.OK);
     }
+
+    @GetMapping("/{userId}")
+    @Operation(summary = "특정 사용자 조회", description = "userId로 사용자 상세 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))}),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
+    })
+    public ResponseEntity<CommonRes> getUser(
+            @Schema(description = "유저 ID", example = "1")
+            @PathVariable("userId") Long userId
+    ) {
+        UserListItem userListItem = userService.adminGetUserDetail(userId);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("userDetail", userListItem);
+
+        CommonRes res = CommonRes.builder()
+                .status(HttpStatus.OK.value())
+                .message("사용자 조회에 성공하였습니다.")
+                .data(data)
+                .build();
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
 }

@@ -9,4 +9,5 @@ import java.util.List;
 public interface UserService {
     List<UserListItem> adminGetUserList(int page, int pageSize);
     List<UserListItem> adminSearchUser(String searchKeyword);
+    UserListItem adminGetUserDetail(Long userId);
 }

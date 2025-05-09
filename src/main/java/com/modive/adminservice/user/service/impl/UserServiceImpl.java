@@ -6,17 +6,21 @@ import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveCountRes
 //import com.modive.adminservice.external.client.reward.RewardClient;
 import com.modive.adminservice.external.client.user.UserClient;
 import com.modive.adminservice.external.client.user.dto.res.UCSearchUserResData;
+import com.modive.adminservice.external.client.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListItem;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
+import com.modive.adminservice.global.util.DateUtils;
 import com.modive.adminservice.user.dto.res.UserListItem;
 import com.modive.adminservice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -121,6 +125,22 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 사용자 서비스에서 사용자 상세 데이터 조회
+     *
+     * @param userId 유저ID
+     * @return 사용자 상세 데이터
+     */
+    private UCUserDetailResData fetchUserDetailFromUserService(Long userId) {
+        CommonRes<UCUserDetailResData> userClientRes = userClient.getUserDetail(userId);
+        if (userClientRes == null || userClientRes.data == null) {
+            log.warn("UserClient.getUserDetail(userId = {}) - response or data is null", userId);
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+
+        return userClientRes.data;
+    }
+
+    /**
      * 관리자용 사용자 목록 조회
      *
      * @param page 페이지 번호
@@ -144,7 +164,28 @@ public class UserServiceImpl implements UserService {
         List<Long> userIds = users.stream()
                 .map(UCUserListItem::getUserId)
                 .collect(Collectors.toList());
+
         Map<Long, Integer> driveCountMap = fetchDriveCountMapFromDashboardService(userIds);
         return mergeUserData(users, driveCountMap);
+    }
+
+    @Override
+    public UserListItem adminGetUserDetail(Long userId) {
+        UCUserDetailResData user = fetchUserDetailFromUserService(userId);
+        List<Long> userIds = new ArrayList<>();
+        userIds.add(userId);
+
+        Map<Long, Integer> driveCountMap = fetchDriveCountMapFromDashboardService(userIds);
+
+        UserListItem userListItem = UserListItem.builder()
+                .userId(userId)
+                .nickname(user.getNickname())
+                .email(user.getEmail())
+                .experience(DateUtils.getYearsSince(
+                        LocalDate.parse(user.getLicenseDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME).atStartOfDay())
+                )
+                .build();
+
+        return userListItem;
     }
 }
