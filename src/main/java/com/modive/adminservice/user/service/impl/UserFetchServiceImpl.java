@@ -90,4 +90,19 @@ public class UserFetchServiceImpl implements UserFetchService {
 
         return userClientRes.getData().getUsers();
     }
+
+    /**
+     * 사용자 서비스에서 사용자 비활성화 처리
+     *
+     * @param userId 유저ID
+     * @return 비활성화 처리 성공 유무
+     */
+    @Override
+    public void inactiveUser(Long userId) {
+        CommonRes userClientRes = userClient.getUserDetail(userId);
+        if (userClientRes == null || userClientRes.data == null) {
+            log.warn("UserClient.getUserDetail(userId = {}) - response or data is null", userId);
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.modive.adminservice.global.dto.res;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.springframework.http.HttpStatus;
 
@@ -17,6 +18,8 @@ import java.util.Map;
 public class CommonRes<T> {
     public int status;
     public String message;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public T data;
 
     public static <T> CommonRes<T> success(T data, String message) {

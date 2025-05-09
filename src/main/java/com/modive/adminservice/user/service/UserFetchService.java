@@ -11,4 +11,5 @@ public interface UserFetchService {
     List<UCUserListItem> fetchSearchUsers(String searchKeyword);
     UCUserDetailResData fetchUserDetail(Long userId);
     List<UCUserListItem> fetchFilteredUser(UserFilterReq params);
+    void inactiveUser(Long userId);
 }

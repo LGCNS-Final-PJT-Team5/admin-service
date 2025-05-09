@@ -10,4 +10,5 @@ public interface UserService {
     List<UserListItem> adminSearchUser(String searchKeyword);
     UserListItem adminGetUserDetail(Long userId);
     List<UserListItem> adminFilterUser(UserFilterReq req);
+    void adminInactiveUser(Long userId);
 }

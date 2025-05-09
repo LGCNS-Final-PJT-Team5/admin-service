@@ -4,6 +4,7 @@ import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
 import com.modive.adminservice.user.dto.req.UserFilterReq;
 import com.modive.adminservice.user.dto.res.UserListItem;
+import com.modive.adminservice.user.service.UserFetchService;
 import com.modive.adminservice.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,6 +28,7 @@ import java.util.Map;
 @RequestMapping("/admin/users")
 public class UserController {
     private final UserService userService;
+    private final UserFetchService userFetchService;
 
     @GetMapping
     @Operation(summary = "사용자 전체 목록 조회", description = "등록된 전체 사용자를 페이징으로 조회합니다.")
@@ -63,7 +65,8 @@ public class UserController {
     })
     public ResponseEntity<CommonRes> searchUser(
             @Parameter(name = "searchKeyword", description = "사용자 이메일", example = "user@modive.com", required = true)
-            @RequestParam String searchKeyword) {
+            @RequestParam String searchKeyword
+    ) {
         List<UserListItem> userListItems = userService.adminSearchUser(searchKeyword);
 
         Map<String, Object> data = new HashMap<>();
@@ -118,6 +121,28 @@ public class UserController {
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 필터링에 성공하였습니다."),
+                HttpStatus.OK
+        );
+    }
+
+    @DeleteMapping("/{userId}")
+    @Operation(summary = "특정 사용자 조회", description = "userId로 사용자 상세 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))}),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
+    })
+    public ResponseEntity<CommonRes> deleteUser(
+            @Schema(description = "유저 ID", example = "1")
+            @PathVariable("userId") Long userId
+    ) {
+        userFetchService.inactiveUser(userId);
+
+        return new ResponseEntity<>(
+                CommonRes.success(null, "사용자 비활성화 처리가 완료되었습니다."),
                 HttpStatus.OK
         );
     }

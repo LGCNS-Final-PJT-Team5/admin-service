@@ -4,6 +4,7 @@ import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.user.dto.req.UserFilterReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -51,4 +52,13 @@ public interface UserClient {
      */
     @GetMapping("/user/filter")
     CommonRes getFilteredUser(@SpringQueryMap UserFilterReq params);
+
+    /**
+     * userId를 기반으로 사용자 비활성화
+     *
+     * @param userId 유저ID
+     * @return 비활성화 결과
+     */
+    @DeleteMapping("/user/{userId}")
+    CommonRes deleteUser(@PathVariable Long userId);
 }

@@ -147,4 +147,9 @@ public class UserServiceImpl implements UserService {
 
         return mergeUserData(users, driveCountMap);
     }
+
+    @Override
+    public void adminInactiveUser(Long userId) {
+        userFetchService.inactiveUser(userId);
+    }
 }
