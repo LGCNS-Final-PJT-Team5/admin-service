@@ -13,6 +13,7 @@ import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
 import com.modive.adminservice.global.util.DateUtils;
+import com.modive.adminservice.user.dto.req.UserFilterReq;
 import com.modive.adminservice.user.dto.res.UserListItem;
 import com.modive.adminservice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -141,6 +142,23 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 사용자 서비스에서 필터링한 데이터 조회
+     *
+     * @param params 최소 운전 경력, 최대 운전 경력 등 필터링 데이터와 페이지네이션에 필요한 데이터
+     * @return 필터링 결과
+     */
+    private List<UCUserListItem> fetchFilteredUserFromUserService(UserFilterReq params) {
+        CommonRes<UCUserListResData> userClientRes = userClient.getFilteredUser(params);
+        if (userClientRes == null || userClientRes.data == null) {
+            log.warn("UserClient.getFilteredUser(params) - response or data is null", params);
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+
+        return userClientRes.getData().getUsers();
+    }
+
+
+    /**
      * 관리자용 사용자 목록 조회
      *
      * @param page 페이지 번호
@@ -206,5 +224,23 @@ public class UserServiceImpl implements UserService {
                 .build();
 
         return userListItem;
+    }
+
+    /**
+     * `운전 경력`, `가입 후 경과 개월 수`, `계정 활성 여부`를 기준으로 필터링
+     *
+     * @param req 필터링 데이터, 페이지네이션에 필요한 데이터
+     * @return 필터링 결과
+     */
+    @Override
+    public List<UserListItem> adminFilterUser(UserFilterReq req) {
+        List<UCUserListItem> users = fetchFilteredUserFromUserService(req);
+        List<Long> userIds = users.stream()
+                .map(UCUserListItem::getUserId)
+                .collect(Collectors.toList());
+
+        Map<Long, Integer> driveCountMap = fetchDriveCountMapFromDashboardService(userIds);
+
+        return mergeUserData(users, driveCountMap);
     }
 }

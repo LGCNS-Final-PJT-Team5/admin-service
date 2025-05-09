@@ -2,6 +2,7 @@ package com.modive.adminservice.user.controller;
 
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
+import com.modive.adminservice.user.dto.req.UserFilterReq;
 import com.modive.adminservice.user.dto.res.UserListItem;
 import com.modive.adminservice.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -102,6 +103,31 @@ public class UserController {
         CommonRes res = CommonRes.builder()
                 .status(HttpStatus.OK.value())
                 .message("사용자 조회에 성공하였습니다.")
+                .data(data)
+                .build();
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @GetMapping("/filter")
+    @Operation(summary = "사용자 조건 필터링", description = "운전 경력, 가입 기간, 활성 여부 기준으로 사용자를 필터링합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+    })
+    public ResponseEntity<CommonRes> userFilter(
+            @Parameter(name = "UserFilterReq", description = "필터링 데이터, 페이지네이션에 필요한 데이터")
+            @ModelAttribute UserFilterReq req
+    ) {
+        List<UserListItem> userListItems = userService.adminFilterUser(req);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("users", userListItems);
+
+        CommonRes res = CommonRes.builder()
+                .status(HttpStatus.OK.value())
+                .message("사용자 필터링에 성공하였습니다.")
                 .data(data)
                 .build();
 
