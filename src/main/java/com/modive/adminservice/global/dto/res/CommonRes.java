@@ -1,6 +1,7 @@
 package com.modive.adminservice.global.dto.res;
 
 import lombok.*;
+import org.springframework.http.HttpStatus;
 
 import java.util.Map;
 
@@ -17,4 +18,12 @@ public class CommonRes<T> {
     public int status;
     public String message;
     public T data;
+
+    public static <T> CommonRes<T> success(T data, String message) {
+        return CommonRes.<T>builder()
+                .status(HttpStatus.OK.value())
+                .message(message)
+                .data(data)
+                .build();
+    }
 }

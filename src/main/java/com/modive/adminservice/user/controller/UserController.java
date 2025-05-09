@@ -47,13 +47,10 @@ public class UserController {
         Map<String, Object> data = new HashMap<>();
         data.put("users", userListItems);
 
-        CommonRes res = CommonRes.builder()
-                .status(HttpStatus.OK.value())
-                .message("사용자 목록 조회에 성공하였습니다.")
-                .data(data)
-                .build();
-
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return new ResponseEntity<>(
+                CommonRes.success(data, "사용자 목록 조회에 성공하였습니다."),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/search")
@@ -72,13 +69,10 @@ public class UserController {
         Map<String, Object> data = new HashMap<>();
         data.put("searchResult", userListItems);
 
-        CommonRes res = CommonRes.builder()
-                .status(HttpStatus.OK.value())
-                .message("사용자 검색에 성공하였습니다.")
-                .data(data)
-                .build();
-
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return new ResponseEntity<>(
+                CommonRes.success(data, "사용자 검색에 성공하였습니다."),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/{userId}")
@@ -100,13 +94,10 @@ public class UserController {
         Map<String, Object> data = new HashMap<>();
         data.put("userDetail", userListItem);
 
-        CommonRes res = CommonRes.builder()
-                .status(HttpStatus.OK.value())
-                .message("사용자 조회에 성공하였습니다.")
-                .data(data)
-                .build();
-
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return new ResponseEntity<>(
+                CommonRes.success(data, "사용자 상세 조회에 성공하였습니다."),
+                HttpStatus.OK
+        );
     }
 
     @GetMapping("/filter")
@@ -125,12 +116,9 @@ public class UserController {
         Map<String, Object> data = new HashMap<>();
         data.put("users", userListItems);
 
-        CommonRes res = CommonRes.builder()
-                .status(HttpStatus.OK.value())
-                .message("사용자 필터링에 성공하였습니다.")
-                .data(data)
-                .build();
-
-        return new ResponseEntity<>(res, HttpStatus.OK);
+        return new ResponseEntity<>(
+                CommonRes.success(data, "사용자 필터링에 성공하였습니다."),
+                HttpStatus.OK
+        );
     }
 }
