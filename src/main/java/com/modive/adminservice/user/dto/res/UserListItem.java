@@ -12,7 +12,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserListRes {
+public class UserListItem {
     private Long userId;
     private String nickname;
     private String email;

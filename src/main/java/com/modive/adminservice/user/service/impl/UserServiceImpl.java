@@ -5,15 +5,17 @@ import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveCountIte
 import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveCountResData;
 import com.modive.adminservice.external.client.reward.RewardClient;
 import com.modive.adminservice.external.client.user.UserClient;
+import com.modive.adminservice.external.client.user.dto.res.UCSearchUserResData;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListItem;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
-import com.modive.adminservice.user.dto.res.UserListRes;
+import com.modive.adminservice.user.dto.res.UserListItem;
 import com.modive.adminservice.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -76,8 +79,8 @@ public class UserServiceImpl implements UserService {
      * @param driveCountMap 사용자별 운전 횟수 맵
      * @return 병합된 사용자 리스트
      */
-    private List<UserListRes> mergeUserData(List<UCUserListItem> users, Map<Long, Integer> driveCountMap) {
-        List<UserListRes> userListRes = new ArrayList<>();
+    private List<UserListItem> mergeUserData(List<UCUserListItem> users, Map<Long, Integer> driveCountMap) {
+        List<UserListItem> userListRes = new ArrayList<>();
         for (UCUserListItem user : users) {
             Integer driveCount = driveCountMap.get(user.getUserId());
 
@@ -85,7 +88,7 @@ public class UserServiceImpl implements UserService {
                 log.warn("Drive count missing for userId={}", user.getUserId());
             }
 
-            UserListRes res = UserListRes.builder()
+            UserListItem res = UserListItem.builder()
                     .userId(user.getUserId())
                     .nickname(user.getNickname())
                     .email(user.getEmail())
@@ -102,6 +105,22 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
+     * 사용자 서비스에서 사용자 검색
+     *
+     * @param searchKeyword 검색어
+     * @return 검색 결과
+     */
+    private List<UCUserListItem> fetchSearchUsersFromUserService(String searchKeyword) {
+        CommonRes<UCSearchUserResData> userClientRes = userClient.searchUser(searchKeyword);
+        if (userClientRes == null || userClientRes.data == null) {
+            log.warn("UserClient.getUserList(searchKeyword = {}) - response or data is null", searchKeyword);
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+
+        return userClientRes.getData().getSearchResult();
+    }
+
+    /**
      * 관리자용 사용자 목록 조회
      *
      * @param page 페이지 번호
@@ -109,12 +128,22 @@ public class UserServiceImpl implements UserService {
      * @return 사용자 목록
      */
     @Override
-    public List<UserListRes> adminGetUserList(int page, int pageSize) {
+    public List<UserListItem> adminGetUserList(int page, int pageSize) {
         List<UCUserListItem> users = fetchUsersFromUserService(page, pageSize);
         List<Long> userIds = users.stream()
                 .map(UCUserListItem::getUserId)
                 .collect(Collectors.toList());
 
+        Map<Long, Integer> driveCountMap = fetchDriveCountMapFromDashboardService(userIds);
+        return mergeUserData(users, driveCountMap);
+    }
+
+    @Override
+    public List<UserListItem> adminSearchUser(String searchKeyword) {
+        List<UCUserListItem> users = fetchSearchUsersFromUserService(searchKeyword);
+        List<Long> userIds = users.stream()
+                .map(UCUserListItem::getUserId)
+                .collect(Collectors.toList());
         Map<Long, Integer> driveCountMap = fetchDriveCountMapFromDashboardService(userIds);
         return mergeUserData(users, driveCountMap);
     }

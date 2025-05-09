@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -15,8 +16,10 @@ import org.springframework.context.annotation.Bean;
                 version = "v1"
         )
 )
+
+@Configuration
 public class SwaggerConfig {
-    private static final String BEARER_TOKEN_PREFIX = "Bearer ";
+    private static final String BEARER_TOKEN_PREFIX = "bearer";
 
     @Bean
     public OpenAPI openAPI() {
