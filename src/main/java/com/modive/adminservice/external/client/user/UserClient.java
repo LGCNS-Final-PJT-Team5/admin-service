@@ -19,4 +19,13 @@ public interface UserClient {
      */
     @GetMapping("/user/list")
     CommonRes getUserList(@RequestParam int page, @RequestParam int pageSize);
+
+    /**
+     * 이메일을 기반으로 사용자 조회
+     *
+     * @param searchKeyword 검색어
+     * @return CommonRes 형태의 검색 결과 응답
+     */
+    @GetMapping("/user")
+    CommonRes searchUser(@RequestParam String searchKeyword);
 }

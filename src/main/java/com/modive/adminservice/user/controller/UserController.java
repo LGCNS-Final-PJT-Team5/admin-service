@@ -1,8 +1,8 @@
 package com.modive.adminservice.user.controller;
 
 import com.modive.adminservice.global.dto.res.CommonRes;
-import com.modive.adminservice.user.dto.res.UserListRes;
-import com.modive.adminservice.user.entity.User;
+import com.modive.adminservice.global.error.dto.ErrorRes;
+import com.modive.adminservice.user.dto.res.UserListItem;
 import com.modive.adminservice.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -32,17 +32,48 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
             content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
-            @ApiResponse(responseCode = "500", description = "Internal Server Error")
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
-    public ResponseEntity<CommonRes> getUserList(@RequestParam int page, @RequestParam int pageSize) {
-        List<UserListRes> userListRes = userService.adminGetUserList(page, pageSize);
+    public ResponseEntity<CommonRes> getUserList(
+            @Parameter(name = "page", description = "페이지 번호", example = "1", required = true)
+            @RequestParam int page,
+
+            @Parameter(name = "pageSize", description = "페이지당 데이터 수", example = "10", required = true)
+            @RequestParam int pageSize) {
+        List<UserListItem> userListItems = userService.adminGetUserList(page, pageSize);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("users", userListRes);
+        data.put("users", userListItems);
 
         CommonRes res = CommonRes.builder()
                 .status(HttpStatus.OK.value())
                 .message("사용자 목록 조회에 성공하였습니다.")
+                .data(data)
+                .build();
+
+        return new ResponseEntity<>(res, HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "사용자 검색", description = "이메일로 사용자 검색합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
+    })
+    public ResponseEntity<CommonRes> searchUser(
+            @Parameter(name = "searchKeyword", description = "사용자 이메일", example = "user@modive.com", required = true)
+            @RequestParam String searchKeyword) {
+        List<UserListItem> userListItems = userService.adminSearchUser(searchKeyword);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("searchResult", userListItems);
+
+        CommonRes res = CommonRes.builder()
+                .status(HttpStatus.OK.value())
+                .message("사용자 검색에 성공하였습니다.")
                 .data(data)
                 .build();
 
