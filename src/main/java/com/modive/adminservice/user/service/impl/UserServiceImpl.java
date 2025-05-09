@@ -158,6 +158,12 @@ public class UserServiceImpl implements UserService {
         return mergeUserData(users, driveCountMap);
     }
 
+    /**
+     * 관리자용 사용자 검색
+     *
+     * @param searchKeyword 검색어
+     * @return 검색 결과
+     */
     @Override
     public List<UserListItem> adminSearchUser(String searchKeyword) {
         List<UCUserListItem> users = fetchSearchUsersFromUserService(searchKeyword);
@@ -169,6 +175,12 @@ public class UserServiceImpl implements UserService {
         return mergeUserData(users, driveCountMap);
     }
 
+    /**
+     * 사용자 정보 상세 조회
+     *
+     * @param userId 유저 ID
+     * @return 사용자 상세 데이터
+     */
     @Override
     public UserListItem adminGetUserDetail(Long userId) {
         UCUserDetailResData user = fetchUserDetailFromUserService(userId);
@@ -177,6 +189,12 @@ public class UserServiceImpl implements UserService {
 
         Map<Long, Integer> driveCountMap = fetchDriveCountMapFromDashboardService(userIds);
 
+        /**
+         * TODO
+         * 유저 서비스에서 특정 사용자 조회 시 응답 값으로
+         * `joinedAt`, `seedBalance`, `isActive` 값 추가 필요
+         * (UCUserDetailResData DTO 참고)
+         */
         UserListItem userListItem = UserListItem.builder()
                 .userId(userId)
                 .nickname(user.getNickname())
@@ -184,6 +202,7 @@ public class UserServiceImpl implements UserService {
                 .experience(DateUtils.getYearsSince(
                         LocalDate.parse(user.getLicenseDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME).atStartOfDay())
                 )
+                .driveCount(driveCountMap.get(userId))
                 .build();
 
         return userListItem;
