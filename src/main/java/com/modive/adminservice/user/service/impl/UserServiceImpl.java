@@ -3,7 +3,7 @@ package com.modive.adminservice.user.service.impl;
 import com.modive.adminservice.external.client.dashboard.DashBoardClient;
 import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveCountItem;
 import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveCountResData;
-import com.modive.adminservice.external.client.reward.RewardClient;
+//import com.modive.adminservice.external.client.reward.RewardClient;
 import com.modive.adminservice.external.client.user.UserClient;
 import com.modive.adminservice.external.client.user.dto.res.UCSearchUserResData;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListItem;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserClient userClient;
-    private final RewardClient rewardClient;
+//    private final RewardClient rewardClient;
     private final DashBoardClient dashBoardClient;
 
     /**
