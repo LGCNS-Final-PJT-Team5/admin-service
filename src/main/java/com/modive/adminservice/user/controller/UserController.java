@@ -4,6 +4,7 @@ import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
 import com.modive.adminservice.user.dto.req.UserFilterReq;
 import com.modive.adminservice.user.dto.res.UserListItem;
+import com.modive.adminservice.user.dto.res.UserRewardItem;
 import com.modive.adminservice.user.service.UserFetchService;
 import com.modive.adminservice.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -143,6 +144,38 @@ public class UserController {
 
         return new ResponseEntity<>(
                 CommonRes.success(null, "사용자 비활성화 처리가 완료되었습니다."),
+                HttpStatus.OK
+        );
+    }
+
+
+    @GetMapping("/{userId}/rewards")
+    @Operation(summary = "사용자 씨앗 내역 조회", description = "userId 기준으로 씨앗 내역을 페이징으로 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))}),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))}),
+    })
+    public ResponseEntity<CommonRes> getUserRewards(
+            @Schema(description = "유저 ID", example = "1")
+            @PathVariable("userId") Long userId,
+
+            @Parameter(name = "page", description = "페이지 번호", example = "2", required = true)
+            @RequestParam int page,
+
+            @Parameter(name = "pageSize", description = "페이지당 항목 수", example = "10", required = true)
+            @RequestParam int pageSize
+    ) {
+        List<UserRewardItem> rewardHistory = userService.adminGetUserReward(userId, page, pageSize);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("rewardHistory", rewardHistory);
+
+        return new ResponseEntity<>(
+                CommonRes.success(data, "사용자 씨앗 내역 조회에 성공하였습니다."),
                 HttpStatus.OK
         );
     }
