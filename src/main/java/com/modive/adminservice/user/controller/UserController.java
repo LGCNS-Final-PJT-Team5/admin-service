@@ -139,7 +139,7 @@ public class UserController {
             @Schema(description = "유저 ID", example = "1")
             @PathVariable("userId") Long userId
     ) {
-        userFetchService.inactiveUser(userId);
+        userService.adminInactiveUser(userId);
 
         return new ResponseEntity<>(
                 CommonRes.success(null, "사용자 비활성화 처리가 완료되었습니다."),
