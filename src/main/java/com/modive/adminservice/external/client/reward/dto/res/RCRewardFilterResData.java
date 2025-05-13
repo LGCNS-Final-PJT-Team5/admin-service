@@ -17,6 +17,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RewardFilterResData {
-    private List<RewardFilterItem> searchResult;
+public class RCRewardFilterResData {
+    private List<RCRewardFilterItem> searchResult;
 }

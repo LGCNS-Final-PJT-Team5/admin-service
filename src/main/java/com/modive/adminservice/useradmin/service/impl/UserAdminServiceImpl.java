@@ -4,9 +4,9 @@ package com.modive.adminservice.useradmin.service.impl;
 import com.modive.adminservice.event.service.EventService;
 import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveListItem;
 import com.modive.adminservice.external.client.reward.RewardClient;
-import com.modive.adminservice.external.client.reward.dto.req.RewardByDriveReq;
-import com.modive.adminservice.external.client.reward.dto.req.RewardFilterReq;
-import com.modive.adminservice.external.client.reward.dto.res.RewardFilterItem;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardByDriveReq;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardFilterReq;
+import com.modive.adminservice.external.client.reward.dto.res.RCRewardFilterItem;
 import com.modive.adminservice.external.client.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListItem;
 import com.modive.adminservice.global.util.DateUtils;
@@ -179,16 +179,16 @@ public class UserAdminServiceImpl implements UserAdminService {
      */
     @Override
     public List<UserRewardItem> adminGetUserReward(Long userId, int page, int pageSize) {
-        RewardFilterReq req = RewardFilterReq.builder()
+        RCRewardFilterReq req = RCRewardFilterReq.builder()
                 .userId(userId)
                 .page(page)
                 .pageSize(pageSize)
                 .build();
 
-        List<RewardFilterItem> rewards = rewardFetchService.fetchRewardFilter(req);
+        List<RCRewardFilterItem> rewards = rewardFetchService.fetchRewardFilter(req);
 
         List<UserRewardItem> userRewardItems = new ArrayList<>();
-        for (RewardFilterItem item : rewards) {
+        for (RCRewardFilterItem item : rewards) {
             UserRewardItem userRewardItem = UserRewardItem.builder()
                     .issuedDate(item.getIssuedDate())
                     .amount(item.getAmount())
@@ -255,7 +255,7 @@ public class UserAdminServiceImpl implements UserAdminService {
         List<DCDriveListItem> drives = dashboardFetchService.fetchDCDriveListByUserId(userId);
 
         List<Long> driveIds = extractDriveIds(drives);
-        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RewardByDriveReq(driveIds));
+        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
 
         return enrichDriveItems(drives, rewardMap);
     }

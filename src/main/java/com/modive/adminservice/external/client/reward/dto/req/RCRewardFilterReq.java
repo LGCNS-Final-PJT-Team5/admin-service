@@ -13,7 +13,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RewardFilterReq {
+public class RCRewardFilterReq {
     private Long userId;
     private String reason;
     private String date;

@@ -1,14 +1,13 @@
 package com.modive.adminservice.useradmin.service;
 
-import com.modive.adminservice.external.client.reward.dto.req.RewardByDriveReq;
-import com.modive.adminservice.external.client.reward.dto.req.RewardFilterReq;
-import com.modive.adminservice.external.client.reward.dto.res.RewardByDriveItem;
-import com.modive.adminservice.external.client.reward.dto.res.RewardFilterItem;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardByDriveReq;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardFilterReq;
+import com.modive.adminservice.external.client.reward.dto.res.RCRewardFilterItem;
 
 import java.util.List;
 import java.util.Map;
 
 public interface RewardFetchService {
-    List<RewardFilterItem> fetchRewardFilter(RewardFilterReq req);
-    Map<Long, Integer> fetchRewardMapByDrive(RewardByDriveReq req);
+    List<RCRewardFilterItem> fetchRewardFilter(RCRewardFilterReq req);
+    Map<Long, Integer> fetchRewardMapByDrive(RCRewardByDriveReq req);
 }

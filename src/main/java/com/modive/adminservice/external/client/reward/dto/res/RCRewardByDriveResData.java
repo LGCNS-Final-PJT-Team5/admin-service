@@ -17,6 +17,6 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RewardByDriveResData {
-    private List<RewardByDriveItem> rewardsByDrive;
+public class RCRewardByDriveResData {
+    private List<RCRewardByDriveItem> rewardsByDrive;
 }

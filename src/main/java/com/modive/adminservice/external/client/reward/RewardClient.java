@@ -1,7 +1,7 @@
 package com.modive.adminservice.external.client.reward;
 
-import com.modive.adminservice.external.client.reward.dto.req.RewardByDriveReq;
-import com.modive.adminservice.external.client.reward.dto.req.RewardFilterReq;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardByDriveReq;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
@@ -23,7 +23,7 @@ public interface RewardClient {
      * @return CommonRes 형태의 필터링 결과 응답
      */
     @GetMapping("/reward/filter")
-    CommonRes filterReward(@SpringQueryMap RewardFilterReq params);
+    CommonRes filterReward(@SpringQueryMap RCRewardFilterReq params);
 
     /**
      * drive ID를 기준으로 리워드 적립 내용 조회
@@ -32,5 +32,5 @@ public interface RewardClient {
      * @return drive ID별 리워드 적립 데이터
      */
     @PostMapping("/reward/by-drive")
-    CommonRes getRewardByDrive(@RequestBody RewardByDriveReq req);
+    CommonRes getRewardByDrive(@RequestBody RCRewardByDriveReq req);
 }

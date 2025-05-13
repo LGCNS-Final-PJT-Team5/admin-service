@@ -1,12 +1,12 @@
 package com.modive.adminservice.useradmin.service.impl;
 
 import com.modive.adminservice.external.client.reward.RewardClient;
-import com.modive.adminservice.external.client.reward.dto.req.RewardByDriveReq;
-import com.modive.adminservice.external.client.reward.dto.req.RewardFilterReq;
-import com.modive.adminservice.external.client.reward.dto.res.RewardByDriveItem;
-import com.modive.adminservice.external.client.reward.dto.res.RewardByDriveResData;
-import com.modive.adminservice.external.client.reward.dto.res.RewardFilterItem;
-import com.modive.adminservice.external.client.reward.dto.res.RewardFilterResData;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardByDriveReq;
+import com.modive.adminservice.external.client.reward.dto.req.RCRewardFilterReq;
+import com.modive.adminservice.external.client.reward.dto.res.RCRewardByDriveItem;
+import com.modive.adminservice.external.client.reward.dto.res.RCRewardByDriveResData;
+import com.modive.adminservice.external.client.reward.dto.res.RCRewardFilterItem;
+import com.modive.adminservice.external.client.reward.dto.res.RCRewardFilterResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
@@ -33,8 +33,8 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * @return 필터링 결과
      */
     @Override
-    public List<RewardFilterItem> fetchRewardFilter(RewardFilterReq req) {
-        CommonRes<RewardFilterResData> res = rewardClient.filterReward(req);
+    public List<RCRewardFilterItem> fetchRewardFilter(RCRewardFilterReq req) {
+        CommonRes<RCRewardFilterResData> res = rewardClient.filterReward(req);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.filterReward - response or data is null");
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
@@ -49,15 +49,15 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * @return drive ID별 리워드 조회 결과
      */
     @Override
-    public Map<Long, Integer> fetchRewardMapByDrive(RewardByDriveReq req) {
-        CommonRes<RewardByDriveResData> res = rewardClient.getRewardByDrive(req);
+    public Map<Long, Integer> fetchRewardMapByDrive(RCRewardByDriveReq req) {
+        CommonRes<RCRewardByDriveResData> res = rewardClient.getRewardByDrive(req);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.getRewardByDrive(req = {}) - response or data is null", req.toString());
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
         Map<Long, Integer> rewardMap = new HashMap<>();
-        for (RewardByDriveItem item : res.data.getRewardsByDrive()) {
+        for (RCRewardByDriveItem item : res.data.getRewardsByDrive()) {
             rewardMap.put(item.getDriveId(), item.getReward());
         }
 

@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RewardFilterItem {
+public class RCRewardFilterItem {
     private Long rewardId;
 
 //    TODO 응답 DTO에 이메일 포함 여부 확인
