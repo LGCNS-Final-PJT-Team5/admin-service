@@ -13,6 +13,6 @@ public interface UserFetchService {
     UCUserDetailResData fetchUserDetail(Long userId);
     List<UCUserListItem> fetchFilteredUser(UserFilterReq params);
     void inactiveUser(Long userId);
-    UCTotalCntAndRateItem getUserTotalCountAndChangeRate();
-    UCTotalCntAndRateItem getDevicesTotalCountAndChangeRate();
+    UCTotalCntAndRateItem fetchUserTotalCountAndChangeRate();
+    UCTotalCntAndRateItem fetchDevicesTotalCountAndChangeRate();
 }

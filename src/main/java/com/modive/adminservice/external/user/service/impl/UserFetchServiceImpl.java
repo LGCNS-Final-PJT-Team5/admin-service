@@ -109,7 +109,7 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 사용자 누적 합계 및 증감률 조회
      */
     @Override
-    public UCTotalCntAndRateItem getUserTotalCountAndChangeRate() {
+    public UCTotalCntAndRateItem fetchUserTotalCountAndChangeRate() {
         CommonRes<UCTotalUserResData> res = userClient.getTotalUser();
         if (res == null || res.data == null) {
             log.warn("UserClient.getTotalUser() - response or data is null", res);
@@ -123,7 +123,7 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 디바이스 누적 합계 및 증감률 조회
      */
     @Override
-    public UCTotalCntAndRateItem getDevicesTotalCountAndChangeRate() {
+    public UCTotalCntAndRateItem fetchDevicesTotalCountAndChangeRate() {
         CommonRes<UCTotalDeviceResData> res = userClient.getTotalUserCars();
         if (res == null || res.data == null) {
             log.warn("UserClient.getTotalUserCars() - response or data is null", res);

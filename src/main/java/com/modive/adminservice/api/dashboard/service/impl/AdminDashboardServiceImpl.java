@@ -23,13 +23,13 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
 
     @Override
     public Map<String, TotalCntAndRateItem> getDashboardStatistics() {
-        UCTotalCntAndRateItem userTotalCountAndChangeRate = userFetchService.getUserTotalCountAndChangeRate();
+        UCTotalCntAndRateItem userTotalCountAndChangeRate = userFetchService.fetchUserTotalCountAndChangeRate();
         TotalCntAndRateItem totalUsers = TotalCntAndRateItem.builder()
                 .value(userTotalCountAndChangeRate.getValue())
                 .changeRate(userTotalCountAndChangeRate.getChangeRate())
                 .build();
 
-        UCTotalCntAndRateItem deviceTotalCountAndChangeRate = userFetchService.getDevicesTotalCountAndChangeRate();
+        UCTotalCntAndRateItem deviceTotalCountAndChangeRate = userFetchService.fetchDevicesTotalCountAndChangeRate();
         TotalCntAndRateItem totalDevices = TotalCntAndRateItem.builder()
                 .value(deviceTotalCountAndChangeRate.getValue())
                 .changeRate(deviceTotalCountAndChangeRate.getChangeRate())
