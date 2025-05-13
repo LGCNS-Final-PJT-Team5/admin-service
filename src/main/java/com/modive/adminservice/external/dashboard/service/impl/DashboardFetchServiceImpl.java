@@ -75,4 +75,18 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
 
         return res.getData().getTotalDrives();
     }
+
+    /**
+     *  대시보드 서비스에서 12개월치 운전 횟수 조회
+     */
+    @Override
+    public List<DCMonthlyDriveItem> fetchMonthlyDrivesStatistics() {
+        CommonRes<DCMontlyDriveResData> res = dashBoardClient.getMonthlyStats();
+        if (res == null || res.data == null) {
+            log.warn("DashboardClient.getMonthlyStats() - response or data is null");
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+
+        return res.getData().getMonthlyDrivesStatistics();
+    }
 }

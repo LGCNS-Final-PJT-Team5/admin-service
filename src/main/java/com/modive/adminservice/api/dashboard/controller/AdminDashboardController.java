@@ -1,5 +1,6 @@
 package com.modive.adminservice.api.dashboard.controller;
 
+import com.modive.adminservice.api.dashboard.dto.res.MonthlyDrivesItem;
 import com.modive.adminservice.api.dashboard.dto.res.TotalCntAndRateItem;
 import com.modive.adminservice.api.dashboard.dto.res.TotalEventCntByReasonItem;
 import com.modive.adminservice.api.dashboard.service.AdminDashboardService;
@@ -67,6 +68,27 @@ public class AdminDashboardController {
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "대시 보드 통계 조회에 성공하였습니다."),
+                HttpStatus.OK
+        );
+    }
+
+
+    @GetMapping("/drives/monthly-stats")
+    @Operation(summary = "월별 운전 횟수", description = "대시 보드의 월별 운전 횟수 추이 데이터를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
+    })
+    public ResponseEntity<CommonRes> getMonthlyDrivesStatistics () {
+        List<MonthlyDrivesItem> monthlyDrivesStatistics = adminDashboardService.getMonthlyDrivesStatistics();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("monthlyDrivesStatistics", monthlyDrivesStatistics);
+
+        return new ResponseEntity<>(
+                CommonRes.success(data, "월별 운전 횟수 조회에 성공했습니다."),
                 HttpStatus.OK
         );
     }

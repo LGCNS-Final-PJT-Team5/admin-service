@@ -1,5 +1,6 @@
 package com.modive.adminservice.api.dashboard.service.impl;
 
+import com.modive.adminservice.api.dashboard.dto.res.MonthlyDrivesItem;
 import com.modive.adminservice.api.dashboard.dto.res.TotalCntAndRateItem;
 import com.modive.adminservice.api.dashboard.service.AdminDashboardService;
 import com.modive.adminservice.external.dashboard.dto.res.DCTotalCntAndRateItem;
@@ -11,8 +12,11 @@ import com.modive.adminservice.external.user.service.UserFetchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -54,5 +58,18 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         dashboardStatistics.put("totalIssuedRewards", totalIssuedRewards);
 
         return dashboardStatistics;
+    }
+
+    @Override
+    public List<MonthlyDrivesItem> getMonthlyDrivesStatistics() {
+        List<MonthlyDrivesItem> monthlyDrivesStatistics = dashboardFetchService.fetchMonthlyDrivesStatistics().stream()
+                .map(item -> MonthlyDrivesItem.builder()
+                        .year(item.getYear())
+                        .month(item.getMonth())
+                        .count(item.getCount())
+                        .build()
+                )
+                .collect(Collectors.toList());
+        return List.of();
     }
 }

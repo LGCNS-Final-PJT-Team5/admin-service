@@ -36,4 +36,7 @@ public interface DashBoardClient {
 
     @GetMapping("/dashboard/drives/total")
     CommonRes getTotalDriveCount();
+
+    @GetMapping("/dashboard/drives/monthly-stats")
+    CommonRes getMonthlyStats();
 }
