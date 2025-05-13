@@ -70,6 +70,6 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                         .build()
                 )
                 .collect(Collectors.toList());
-        return List.of();
+        return monthlyDrivesStatistics;
     }
 }
