@@ -222,7 +222,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap) {
         List<UserDriveListItem> userDriveItems = new ArrayList<>();
         for (DCDriveListItem drive : drives) {
-            List<UserDriveListEventItem> userDriveListItems = eventService.getEventCntByType(drive.getDriveId()).stream()
+            List<UserDriveListEventItem> userDriveListItems = eventService.getTotalEventCntByType(drive.getDriveId()).stream()
                     .map(item -> UserDriveListEventItem.builder()
                             .type(item.getType())
                             .count(item.getCount())

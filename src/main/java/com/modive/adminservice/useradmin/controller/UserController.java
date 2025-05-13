@@ -30,7 +30,6 @@ import java.util.Map;
 @RequestMapping("/admin/users")
 public class UserController {
     private final UserAdminService userAdminService;
-    private final UserFetchService userFetchService;
 
     @GetMapping
     @Operation(summary = "사용자 전체 목록 조회", description = "등록된 전체 사용자를 페이징으로 조회합니다.")

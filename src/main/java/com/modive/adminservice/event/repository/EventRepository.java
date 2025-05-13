@@ -1,5 +1,6 @@
 package com.modive.adminservice.event.repository;
 
+import com.modive.adminservice.event.dto.EventTotalCntByTypeDTO;
 import com.modive.adminservice.event.dto.EventsByDriveDTO;
 import com.modive.adminservice.event.entity.Event;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,9 @@ public interface EventRepository extends JpaRepository<Event, Long> {
             "WHERE e.driveId = :driveId " +
             "GROUP BY et.eventTypeId, et.eventTypeName")
     List<EventsByDriveDTO> countByTypeGroupedByDriveId(@Param("driveId") Long driveId);
+
+    @Query("SELECT new com.modive.adminservice.event.dto.EventTotalCntByTypeDTO(et.eventTypeName, COUNT(e)) " +
+            "FROM Event e JOIN e.eventType et " +
+            "GROUP BY et.eventTypeId")
+    List<EventTotalCntByTypeDTO> totalCntByType();
 }
