@@ -81,7 +81,7 @@ public class AdminDashboardController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
-    public ResponseEntity<CommonRes> getMonthlyDrivesStatistics () {
+    public ResponseEntity<CommonRes> getMonthlyDrivesStatistics() {
         List<MonthlyDrivesItem> monthlyDrivesStatistics = adminDashboardService.getMonthlyDrivesStatistics();
 
         Map<String, Object> data = new HashMap<>();
@@ -89,6 +89,26 @@ public class AdminDashboardController {
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "월별 운전 횟수 조회에 성공했습니다."),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/users/monthly-stats")
+    @Operation(summary = "사용자 증감 추이", description = "대시 보드의 사용자 증감 추이 데이터를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
+    })
+    public ResponseEntity<CommonRes> getMonthlyUsersStatistics() {
+        Map<String, Object> userStatistics = adminDashboardService.getMonthlyUserStatistics();
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("userStatistics", userStatistics);
+
+        return new ResponseEntity<>(
+                CommonRes.success(data, "사용자 증감 추이 조회에 성공하였습니다."),
                 HttpStatus.OK
         );
     }

@@ -10,4 +10,5 @@ import java.util.Map;
 public interface AdminDashboardService {
     Map<String, TotalCntAndRateItem> getDashboardStatistics();
     List<MonthlyDrivesItem> getMonthlyDrivesStatistics();
+    Map<String, Object> getMonthlyUserStatistics();
 }

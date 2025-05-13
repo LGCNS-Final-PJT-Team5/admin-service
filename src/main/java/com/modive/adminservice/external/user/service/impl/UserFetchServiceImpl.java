@@ -12,7 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.http.client.ClientHttpRequestFactoryBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -131,5 +133,23 @@ public class UserFetchServiceImpl implements UserFetchService {
         }
 
         return res.getData().getTotalCarCount();
+    }
+
+    /**
+     * @return 사용자 월별 증감 추이
+     */
+    @Override
+    public Map<String, Object> fetchUserStatistics() {
+        CommonRes<UCUserStatisticsResData> res = userClient.getMonthlyStats();
+        if (res == null || res.data == null) {
+            log.warn("UserClient.getMonthlyStats() - response or data is null", res);
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+
+        Map<String, Object> datas = new HashMap<>();
+        datas.put("summary", res.getData().getSummary());
+        datas.put("userTrend", res.getData().getUserTrend());
+
+        return datas;
     }
 }

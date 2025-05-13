@@ -2,12 +2,16 @@ package com.modive.adminservice.api.dashboard.service.impl;
 
 import com.modive.adminservice.api.dashboard.dto.res.MonthlyDrivesItem;
 import com.modive.adminservice.api.dashboard.dto.res.TotalCntAndRateItem;
+import com.modive.adminservice.api.dashboard.dto.res.UserMonthlyItem;
+import com.modive.adminservice.api.dashboard.dto.res.UserStatisticsSummaryItem;
 import com.modive.adminservice.api.dashboard.service.AdminDashboardService;
 import com.modive.adminservice.external.dashboard.dto.res.DCTotalCntAndRateItem;
 import com.modive.adminservice.external.dashboard.service.DashboardFetchService;
 import com.modive.adminservice.external.reward.dto.res.RCRewardTotalCntAndRateItem;
 import com.modive.adminservice.external.reward.service.RewardFetchService;
 import com.modive.adminservice.external.user.dto.res.UCTotalCntAndRateItem;
+import com.modive.adminservice.external.user.dto.res.UCUserMonthlyItem;
+import com.modive.adminservice.external.user.dto.res.UCUserStatisticsSummaryItem;
 import com.modive.adminservice.external.user.service.UserFetchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -71,5 +75,33 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                 )
                 .collect(Collectors.toList());
         return monthlyDrivesStatistics;
+    }
+
+    @Override
+    public Map<String, Object> getMonthlyUserStatistics() {
+        Map<String, Object> resData = userFetchService.fetchUserStatistics();
+
+        UCUserStatisticsSummaryItem summaryRes = (UCUserStatisticsSummaryItem) resData.get("summary");
+        UserStatisticsSummaryItem summary = UserStatisticsSummaryItem.builder()
+                .lastWeekNewUsers(summaryRes.getLastWeekNewUsers())
+                .monthlyUserGrowthRate(summaryRes.getMonthlyUserGrowthRate())
+                .churnRate(summaryRes.getChurnRate())
+                .build();
+
+        List<UserMonthlyItem> userTrends = ((List<UCUserMonthlyItem>) resData.get("userTrend")).stream()
+                .map(item -> UserMonthlyItem.builder()
+                        .year(item.getYear())
+                        .month(item.getMonth())
+                        .newUsers(item.getNewUsers())
+                        .activeUsers(item.getActiveUsers())
+                        .churnedUsers(item.getChurnedUsers())
+                        .build())
+                .collect(Collectors.toList());
+
+        Map result = new HashMap<>();
+        result.put("userTrends", userTrends);
+        result.put("summary", summary);
+
+        return result;
     }
 }

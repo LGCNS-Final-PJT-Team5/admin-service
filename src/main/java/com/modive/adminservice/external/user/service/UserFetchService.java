@@ -4,8 +4,10 @@ import com.modive.adminservice.external.user.dto.res.UCTotalCntAndRateItem;
 import com.modive.adminservice.external.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.user.dto.res.UCUserListItem;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
+import com.modive.adminservice.external.user.dto.res.UCUserStatisticsResData;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UserFetchService {
     List<UCUserListItem> fetchUsers(int page, int pageSize);
@@ -15,4 +17,5 @@ public interface UserFetchService {
     void inactiveUser(Long userId);
     UCTotalCntAndRateItem fetchUserTotalCountAndChangeRate();
     UCTotalCntAndRateItem fetchDevicesTotalCountAndChangeRate();
+    Map<String, Object> fetchUserStatistics();
 }

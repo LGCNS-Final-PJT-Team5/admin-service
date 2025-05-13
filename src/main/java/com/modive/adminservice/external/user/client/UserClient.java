@@ -65,4 +65,7 @@ public interface UserClient {
 
     @GetMapping("/user/total-cars")
     CommonRes getTotalUserCars();
+
+    @GetMapping("/user/monthly-stats")
+    CommonRes getMonthlyStats();
 }
