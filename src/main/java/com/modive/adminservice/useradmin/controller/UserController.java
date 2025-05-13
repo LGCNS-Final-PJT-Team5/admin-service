@@ -81,7 +81,7 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    @Operation(summary = "특정 사용자 조회", description = "userId로 사용자 상세 조회합니다.")
+    @Operation(summary = "사용자 상세 조회", description = "userId로 사용자 상세 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
                     content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
@@ -128,7 +128,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    @Operation(summary = "특정 사용자 조회", description = "userId로 사용자 상세 조회합니다.")
+    @Operation(summary = "사용자 비활성화", description = "userId로 사용자를 비활성화합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
                     content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
