@@ -1,4 +1,4 @@
-package com.modive.adminservice.user.dto.req;
+package com.modive.adminservice.useradmin.dto.req;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

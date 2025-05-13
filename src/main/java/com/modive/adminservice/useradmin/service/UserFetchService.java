@@ -1,8 +1,8 @@
-package com.modive.adminservice.user.service;
+package com.modive.adminservice.useradmin.service;
 
 import com.modive.adminservice.external.client.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListItem;
-import com.modive.adminservice.user.dto.req.UserFilterReq;
+import com.modive.adminservice.useradmin.dto.req.UserFilterReq;
 
 import java.util.List;
 

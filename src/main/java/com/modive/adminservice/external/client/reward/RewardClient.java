@@ -1,10 +1,17 @@
 package com.modive.adminservice.external.client.reward;
 
+import com.modive.adminservice.external.client.reward.dto.req.RewardByDriveReq;
 import com.modive.adminservice.external.client.reward.dto.req.RewardFilterReq;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+/**
+ * reward-service와 통신하는 Feign Client.
+ */
 
 @FeignClient(name="reward-service")
 public interface RewardClient {
@@ -17,4 +24,13 @@ public interface RewardClient {
      */
     @GetMapping("/reward/filter")
     CommonRes filterReward(@SpringQueryMap RewardFilterReq params);
+
+    /**
+     * drive ID를 기준으로 리워드 적립 내용 조회
+     *
+     * @param req drive ID 리스트
+     * @return drive ID별 리워드 적립 데이터
+     */
+    @PostMapping("/reward/by-drive")
+    CommonRes getRewardByDrive(@RequestBody RewardByDriveReq req);
 }

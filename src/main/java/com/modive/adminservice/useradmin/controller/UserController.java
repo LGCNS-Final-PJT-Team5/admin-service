@@ -1,12 +1,13 @@
-package com.modive.adminservice.user.controller;
+package com.modive.adminservice.useradmin.controller;
 
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
-import com.modive.adminservice.user.dto.req.UserFilterReq;
-import com.modive.adminservice.user.dto.res.UserListItem;
-import com.modive.adminservice.user.dto.res.UserRewardItem;
-import com.modive.adminservice.user.service.UserFetchService;
-import com.modive.adminservice.user.service.UserService;
+import com.modive.adminservice.useradmin.dto.req.UserFilterReq;
+import com.modive.adminservice.useradmin.dto.res.UserDriveListItem;
+import com.modive.adminservice.useradmin.dto.res.UserListItem;
+import com.modive.adminservice.useradmin.dto.res.UserRewardItem;
+import com.modive.adminservice.useradmin.service.UserFetchService;
+import com.modive.adminservice.useradmin.service.UserAdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,7 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/admin/users")
 public class UserController {
-    private final UserService userService;
+    private final UserAdminService userAdminService;
     private final UserFetchService userFetchService;
 
     @GetMapping
@@ -45,7 +46,7 @@ public class UserController {
 
             @Parameter(name = "pageSize", description = "페이지당 데이터 수", example = "10", required = true)
             @RequestParam int pageSize) {
-        List<UserListItem> userListItems = userService.adminGetUserList(page, pageSize);
+        List<UserListItem> userListItems = userAdminService.adminGetUserList(page, pageSize);
 
         Map<String, Object> data = new HashMap<>();
         data.put("users", userListItems);
@@ -68,7 +69,7 @@ public class UserController {
             @Parameter(name = "searchKeyword", description = "사용자 이메일", example = "user@modive.com", required = true)
             @RequestParam String searchKeyword
     ) {
-        List<UserListItem> userListItems = userService.adminSearchUser(searchKeyword);
+        List<UserListItem> userListItems = userAdminService.adminSearchUser(searchKeyword);
 
         Map<String, Object> data = new HashMap<>();
         data.put("searchResult", userListItems);
@@ -93,7 +94,7 @@ public class UserController {
             @Schema(description = "유저 ID", example = "1")
             @PathVariable("userId") Long userId
     ) {
-        UserListItem userListItem = userService.adminGetUserDetail(userId);
+        UserListItem userListItem = userAdminService.adminGetUserDetail(userId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("userDetail", userListItem);
@@ -115,7 +116,7 @@ public class UserController {
             @Parameter(name = "UserFilterReq", description = "필터링 데이터, 페이지네이션에 필요한 데이터")
             @ModelAttribute UserFilterReq req
     ) {
-        List<UserListItem> userListItems = userService.adminFilterUser(req);
+        List<UserListItem> userListItems = userAdminService.adminFilterUser(req);
 
         Map<String, Object> data = new HashMap<>();
         data.put("users", userListItems);
@@ -140,7 +141,7 @@ public class UserController {
             @Schema(description = "유저 ID", example = "1")
             @PathVariable("userId") Long userId
     ) {
-        userService.adminInactiveUser(userId);
+        userAdminService.adminInactiveUser(userId);
 
         return new ResponseEntity<>(
                 CommonRes.success(null, "사용자 비활성화 처리가 완료되었습니다."),
@@ -169,13 +170,44 @@ public class UserController {
             @Parameter(name = "pageSize", description = "페이지당 항목 수", example = "10", required = true)
             @RequestParam int pageSize
     ) {
-        List<UserRewardItem> rewardHistory = userService.adminGetUserReward(userId, page, pageSize);
+        List<UserRewardItem> rewardHistory = userAdminService.adminGetUserReward(userId, page, pageSize);
 
         Map<String, Object> data = new HashMap<>();
         data.put("rewardHistory", rewardHistory);
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 씨앗 내역 조회에 성공하였습니다."),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/{userId}/drives")
+    @Operation(summary = "사용자 주행 이력 조회", description = "userId 기준으로 운전 기록을 페이징으로 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Success",
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))}),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))}),
+    })
+    public ResponseEntity<CommonRes> getUserDrives(
+            @Schema(description = "유저 ID", example = "1")
+            @PathVariable("userId") Long userId,
+
+            @Parameter(name = "page", description = "페이지 번호", example = "2", required = true)
+            @RequestParam int page,
+
+            @Parameter(name = "pageSize", description = "페이지당 항목 수", example = "10", required = true)
+            @RequestParam int pageSize
+    ) {
+        List<UserDriveListItem> driveListItems = userAdminService.adminGetUserDriveList(userId, page, pageSize);
+
+        Map<String, Object> data = new HashMap<>();
+        data.put("driveHistory", driveListItems);
+
+        return new ResponseEntity<>(
+                CommonRes.success(data, "사용자 운전 내역 조회에 성공하였습니다."),
                 HttpStatus.OK
         );
     }

@@ -1,18 +1,24 @@
-package com.modive.adminservice.user.service.impl;
+package com.modive.adminservice.useradmin.service.impl;
 
 //import com.modive.adminservice.external.client.reward.RewardClient;
+import com.modive.adminservice.event.service.EventService;
+import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveListItem;
+import com.modive.adminservice.external.client.reward.RewardClient;
+import com.modive.adminservice.external.client.reward.dto.req.RewardByDriveReq;
 import com.modive.adminservice.external.client.reward.dto.req.RewardFilterReq;
 import com.modive.adminservice.external.client.reward.dto.res.RewardFilterItem;
 import com.modive.adminservice.external.client.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.client.user.dto.res.UCUserListItem;
 import com.modive.adminservice.global.util.DateUtils;
-import com.modive.adminservice.user.dto.req.UserFilterReq;
-import com.modive.adminservice.user.dto.res.UserListItem;
-import com.modive.adminservice.user.dto.res.UserRewardItem;
-import com.modive.adminservice.user.service.DashboardFetchService;
-import com.modive.adminservice.user.service.RewardFetchService;
-import com.modive.adminservice.user.service.UserFetchService;
-import com.modive.adminservice.user.service.UserService;
+import com.modive.adminservice.useradmin.dto.req.UserFilterReq;
+import com.modive.adminservice.useradmin.dto.res.UserDriveListEventItem;
+import com.modive.adminservice.useradmin.dto.res.UserDriveListItem;
+import com.modive.adminservice.useradmin.dto.res.UserListItem;
+import com.modive.adminservice.useradmin.dto.res.UserRewardItem;
+import com.modive.adminservice.useradmin.service.DashboardFetchService;
+import com.modive.adminservice.useradmin.service.RewardFetchService;
+import com.modive.adminservice.useradmin.service.UserFetchService;
+import com.modive.adminservice.useradmin.service.UserAdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -27,10 +33,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserServiceImpl implements UserService {
+public class UserAdminServiceImpl implements UserAdminService {
     private final UserFetchService userFetchService;
     private final DashboardFetchService dashboardFetchService;
     private final RewardFetchService rewardFetchService;
+    private final EventService eventService;
+    private final RewardClient rewardClient;
 
     /**
      * 사용자 정보와 운전 횟수를 병합하여 최종 사용자 리스트 생성
@@ -63,8 +71,6 @@ public class UserServiceImpl implements UserService {
 
         return userListRes;
     }
-
-
 
 
     /**
@@ -192,5 +198,65 @@ public class UserServiceImpl implements UserService {
         }
 
         return userRewardItems;
+    }
+
+    /**
+     * 운전 이력 리스트에서 주행 ID 목록을 추출하여 List로 반환
+     *
+     * @param drives 운전 이력 리스트
+     * @return drive ID 리스트
+     */
+    private List<Long> extractDriveIds(List<DCDriveListItem> drives) {
+        return drives.stream()
+                .map(DCDriveListItem::getDriveId)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    /**
+     * 주행 리스트에 이벤트 및 리워드 정보를 매핑하여 사용자 주행 정보 생성
+     *
+     * @param drives 대시보드 서비스에서 조회한 운전 내역
+     * @param rewardMap 리워드 서비스에서 조회한 리워드 내역
+     * @return 주행 정보
+     */
+    private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap) {
+        List<UserDriveListItem> userDriveItems = new ArrayList<>();
+        for (DCDriveListItem drive : drives) {
+            List<UserDriveListEventItem> userDriveListItems = eventService.getEventCntByType(drive.getDriveId()).stream()
+                    .map(item -> UserDriveListEventItem.builder()
+                            .type(item.getType())
+                            .count(item.getCount())
+                            .build())
+                    .collect(Collectors.toList());
+
+            UserDriveListItem userDriveListItem = UserDriveListItem.builder()
+                    .date(drive.getDate())
+                    .driveDuration(drive.getDriveDuration())
+                    .events(userDriveListItems)
+                    .rewards(rewardMap.get(drive.getDriveId()))
+                    .build();
+
+            userDriveItems.add(userDriveListItem);
+        }
+
+        return userDriveItems;
+    }
+
+    /**
+     * 사용자의 운전 내역 조회
+     *
+     * @param userId 유저 ID
+     * @param page 페이지 번호
+     * @param pageSize 페이지당 데이터 개수
+     * @return 운전 내역 리스트
+     */
+    @Override
+    public List<UserDriveListItem> adminGetUserDriveList(Long userId, int page, int pageSize) {
+        List<DCDriveListItem> drives = dashboardFetchService.fetchDCDriveListByUserId(userId);
+
+        List<Long> driveIds = extractDriveIds(drives);
+        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RewardByDriveReq(driveIds));
+
+        return enrichDriveItems(drives, rewardMap);
     }
 }

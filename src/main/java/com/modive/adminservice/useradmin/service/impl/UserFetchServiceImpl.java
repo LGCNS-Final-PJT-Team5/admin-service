@@ -1,4 +1,4 @@
-package com.modive.adminservice.user.service.impl;
+package com.modive.adminservice.useradmin.service.impl;
 
 import com.modive.adminservice.external.client.user.UserClient;
 import com.modive.adminservice.external.client.user.dto.res.UCSearchUserResData;
@@ -8,8 +8,8 @@ import com.modive.adminservice.external.client.user.dto.res.UCUserListResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
-import com.modive.adminservice.user.dto.req.UserFilterReq;
-import com.modive.adminservice.user.service.UserFetchService;
+import com.modive.adminservice.useradmin.dto.req.UserFilterReq;
+import com.modive.adminservice.useradmin.service.UserFetchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

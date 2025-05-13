@@ -3,6 +3,7 @@ package com.modive.adminservice.external.client.dashboard;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -23,4 +24,13 @@ public interface DashBoardClient {
      */
     @PostMapping("/dashboard/drives/by-user")
     CommonRes getDriveCountByUser(@RequestBody Map<String, List<Long>> body);
+
+    /**
+     * 사용자 ID를 전달하여, 해당 사용자의 운전 내역 조회.
+     *
+     * @param userId 운전 내역 조회 대상 유저 ID
+     * @return CommonRes 형태로 사용자의 운전 내역 응답 반환
+     */
+    @GetMapping("/dashboard/{userId}/drives")
+    CommonRes getDrivesByUserId(@PathVariable("userId") Long userId);
 }

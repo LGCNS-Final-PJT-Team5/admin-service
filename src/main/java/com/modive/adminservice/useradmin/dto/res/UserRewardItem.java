@@ -1,4 +1,4 @@
-package com.modive.adminservice.user.dto.res;
+package com.modive.adminservice.useradmin.dto.res;
 
 import lombok.*;
 

@@ -1,18 +1,23 @@
-package com.modive.adminservice.user.service.impl;
+package com.modive.adminservice.useradmin.service.impl;
 
 import com.modive.adminservice.external.client.reward.RewardClient;
+import com.modive.adminservice.external.client.reward.dto.req.RewardByDriveReq;
 import com.modive.adminservice.external.client.reward.dto.req.RewardFilterReq;
+import com.modive.adminservice.external.client.reward.dto.res.RewardByDriveItem;
+import com.modive.adminservice.external.client.reward.dto.res.RewardByDriveResData;
 import com.modive.adminservice.external.client.reward.dto.res.RewardFilterItem;
 import com.modive.adminservice.external.client.reward.dto.res.RewardFilterResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
-import com.modive.adminservice.user.service.RewardFetchService;
+import com.modive.adminservice.useradmin.service.RewardFetchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +40,27 @@ public class RewardFetchServiceImpl implements RewardFetchService {
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
         return res.getData().getSearchResult();
+    }
+
+    /**
+     * 리워드 서비스에서 Drive ID별 리워드 적립 내용 조회
+     *
+     * @param req drive ID 리스트
+     * @return drive ID별 리워드 조회 결과
+     */
+    @Override
+    public Map<Long, Integer> fetchRewardMapByDrive(RewardByDriveReq req) {
+        CommonRes<RewardByDriveResData> res = rewardClient.getRewardByDrive(req);
+        if (res == null || res.getData() == null) {
+            log.warn("RewardClient.getRewardByDrive(req = {}) - response or data is null", req.toString());
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+
+        Map<Long, Integer> rewardMap = new HashMap<>();
+        for (RewardByDriveItem item : res.data.getRewardsByDrive()) {
+            rewardMap.put(item.getDriveId(), item.getReward());
+        }
+
+        return rewardMap;
     }
 }
