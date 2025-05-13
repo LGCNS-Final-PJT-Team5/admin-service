@@ -2,6 +2,7 @@ package com.modive.adminservice.api.dashboard.controller;
 
 import com.modive.adminservice.api.dashboard.dto.res.TotalCntAndRateItem;
 import com.modive.adminservice.api.dashboard.dto.res.TotalEventCntByReasonItem;
+import com.modive.adminservice.api.dashboard.service.AdminDashboardService;
 import com.modive.adminservice.domain.event.service.EventService;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
@@ -28,6 +29,7 @@ import java.util.Map;
 @RequestMapping("/admin/dashboard")
 public class AdminDashboardController {
     private final EventService eventService;
+    private final AdminDashboardService adminDashboardService;
 
     @GetMapping("/events/by-reason/total")
     @Operation(summary = "이벤트 유형별 추이", description = "이벤트 유형별 발생 횟수를 조회합니다.")
@@ -57,8 +59,8 @@ public class AdminDashboardController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
-    public ResponseEntity<CommonRes> getMonthly () {
-        Map<String, TotalCntAndRateItem> dashboardStatistics = new HashMap<>();
+    public ResponseEntity<CommonRes> getSummary () {
+        Map<String, TotalCntAndRateItem> dashboardStatistics = adminDashboardService.getDashboardStatistics();
 
         Map<String, Object> data = new HashMap<>();
         data.put("dashboardStatistics", dashboardStatistics);
