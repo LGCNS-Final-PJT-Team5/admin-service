@@ -1,7 +1,7 @@
 package com.modive.adminservice.external.client.user;
 
 import com.modive.adminservice.global.dto.res.CommonRes;
-import com.modive.adminservice.useradmin.dto.req.UserFilterReq;
+import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
