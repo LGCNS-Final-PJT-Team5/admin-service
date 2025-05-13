@@ -29,6 +29,9 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
     private DashboardFetchService dashboardFetchService;
     private RewardFetchService rewardFetchService;
 
+    /**
+     * 대시보드 통계 조회
+     */
     @Override
     public Map<String, TotalCntAndRateItem> getDashboardStatistics() {
         UCTotalCntAndRateItem userTotalCountAndChangeRate = userFetchService.fetchUserTotalCountAndChangeRate();
@@ -64,6 +67,9 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         return dashboardStatistics;
     }
 
+    /**
+     * 월별 운전 횟수 추이 조회
+     */
     @Override
     public List<MonthlyDrivesItem> getMonthlyDrivesStatistics() {
         List<MonthlyDrivesItem> monthlyDrivesStatistics = dashboardFetchService.fetchMonthlyDrivesStatistics().stream()
@@ -77,6 +83,9 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
         return monthlyDrivesStatistics;
     }
 
+    /**
+     * 월별 사용자 추이 조회
+     */
     @Override
     public Map<String, Object> getMonthlyUserStatistics() {
         Map<String, Object> resData = userFetchService.fetchUserStatistics();

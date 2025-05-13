@@ -1,7 +1,11 @@
 package com.modive.adminservice.api.dashboard.dto.res;
 
 import lombok.*;
-import org.springframework.web.bind.annotation.GetMapping;
+
+/**
+ * 관리자 월별 사용자 추이 조회 API 응답에 사용되는 DTO.
+ * 신규 가입자, 증가율, 이탈률 포함
+ */
 
 @Getter
 @Setter
