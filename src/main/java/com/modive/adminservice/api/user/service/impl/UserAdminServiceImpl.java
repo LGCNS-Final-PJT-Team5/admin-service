@@ -2,22 +2,22 @@ package com.modive.adminservice.api.user.service.impl;
 
 //import com.modive.adminservice.external.client.reward.RewardClient;
 import com.modive.adminservice.domain.event.service.EventService;
-import com.modive.adminservice.external.client.dashboard.dto.res.DCDriveListItem;
-import com.modive.adminservice.external.client.reward.RewardClient;
-import com.modive.adminservice.external.client.reward.dto.req.RCRewardByDriveReq;
-import com.modive.adminservice.external.client.reward.dto.req.RCRewardFilterReq;
-import com.modive.adminservice.external.client.reward.dto.res.RCRewardFilterItem;
-import com.modive.adminservice.external.client.user.dto.res.UCUserDetailResData;
-import com.modive.adminservice.external.client.user.dto.res.UCUserListItem;
+import com.modive.adminservice.external.dashboard.dto.res.DCDriveListItem;
+import com.modive.adminservice.external.reward.client.RewardClient;
+import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
+import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
+import com.modive.adminservice.external.reward.dto.res.RCRewardFilterItem;
+import com.modive.adminservice.external.user.dto.res.UCUserDetailResData;
+import com.modive.adminservice.external.user.dto.res.UCUserListItem;
 import com.modive.adminservice.global.util.DateUtils;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import com.modive.adminservice.api.user.dto.res.UserDriveListEventItem;
 import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
 import com.modive.adminservice.api.user.dto.res.UserListItem;
 import com.modive.adminservice.api.user.dto.res.UserRewardItem;
-import com.modive.adminservice.api.user.service.DashboardFetchService;
-import com.modive.adminservice.api.user.service.RewardFetchService;
-import com.modive.adminservice.api.user.service.UserFetchService;
+import com.modive.adminservice.external.dashboard.service.DashboardFetchService;
+import com.modive.adminservice.external.reward.service.RewardFetchService;
+import com.modive.adminservice.external.user.service.UserFetchService;
 import com.modive.adminservice.api.user.service.UserAdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -252,7 +252,7 @@ public class UserAdminServiceImpl implements UserAdminService {
      */
     @Override
     public List<UserDriveListItem> adminGetUserDriveList(Long userId, int page, int pageSize) {
-        List<DCDriveListItem> drives = dashboardFetchService.fetchDCDriveListByUserId(userId);
+        List<DCDriveListItem> drives = dashboardFetchService.fetchDriveListByUserId(userId);
 
         List<Long> driveIds = extractDriveIds(drives);
         Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
