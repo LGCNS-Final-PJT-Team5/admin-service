@@ -1,4 +1,4 @@
-replicaCount: 1
+replicaCount: 0
 
 image:
   repository: 026274465258.dkr.ecr.ap-northeast-2.amazonaws.com/admin-service
