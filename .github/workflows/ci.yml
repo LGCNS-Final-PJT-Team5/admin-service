@@ -17,7 +17,7 @@ jobs:
 
     permissions:
       id-token: write
-      contents: read
+      contents: write
 
     steps:
       - name: Checkout source code
@@ -49,6 +49,10 @@ jobs:
 
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub Actions"
+          
+          git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git
+          
+        
           git add ./charts/values.yaml
           git commit -m "chore: update image tag to ${{ env.IMAGE_TAG }}"
           git push origin HEAD:${{ github.ref }}
