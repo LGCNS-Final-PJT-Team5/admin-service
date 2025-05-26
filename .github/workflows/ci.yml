@@ -45,7 +45,8 @@ jobs:
 
       - name: Update image tag in Helm values.yaml
         run: |
-          sed -i "s/^  tag: .*/  tag: ${{ env.IMAGE_TAG }}/" ./charts/values.yaml
+          sed -i "s/^[[:space:]]*tag:[[:space:]].*/  tag: ${{ env.IMAGE_TAG }}/" ./charts/values.yaml
+
           git config --global user.email "ci@github.com"
           git config --global user.name "GitHub Actions"
           git add ./charts/values.yaml
