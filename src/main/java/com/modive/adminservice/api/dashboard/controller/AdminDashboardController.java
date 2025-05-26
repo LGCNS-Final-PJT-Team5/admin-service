@@ -4,7 +4,7 @@ import com.modive.adminservice.api.dashboard.dto.res.MonthlyDrivesItem;
 import com.modive.adminservice.api.dashboard.dto.res.TotalCntAndRateItem;
 import com.modive.adminservice.api.dashboard.dto.res.TotalEventCntByReasonItem;
 import com.modive.adminservice.api.dashboard.service.AdminDashboardService;
-import com.modive.adminservice.domain.event.service.EventService;
+import com.modive.adminservice.external.analysis.service.AnalysisService;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/admin/dashboard")
 public class AdminDashboardController {
-    private final EventService eventService;
+    private final AnalysisService analysisService;
     private final AdminDashboardService adminDashboardService;
 
     @GetMapping("/events/by-reason/total")
@@ -41,7 +41,7 @@ public class AdminDashboardController {
                     content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
     public ResponseEntity<CommonRes> getEventsByReason() {
-        List<TotalEventCntByReasonItem> items = eventService.getTotalEventCntByType();
+        List<TotalEventCntByReasonItem> items = analysisService.getTotalEventCntByType();
 
         Map<String, Object> data = new HashMap<>();
         data.put("eventsStatisticsByReason", items);

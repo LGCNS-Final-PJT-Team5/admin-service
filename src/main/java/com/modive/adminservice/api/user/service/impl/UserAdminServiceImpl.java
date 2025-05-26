@@ -1,7 +1,7 @@
 package com.modive.adminservice.api.user.service.impl;
 
 //import com.modive.adminservice.external.client.reward.RewardClient;
-import com.modive.adminservice.domain.event.service.EventService;
+import com.modive.adminservice.external.analysis.service.AnalysisService;
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListItem;
 import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
@@ -37,7 +37,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     private final UserFetchService userFetchService;
     private final DashboardFetchService dashboardFetchService;
     private final RewardFetchService rewardFetchService;
-    private final EventService eventService;
+    private final AnalysisService analysisService;
     private final RewardClient rewardClient;
 
     /**
@@ -222,7 +222,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap) {
         List<UserDriveListItem> userDriveItems = new ArrayList<>();
         for (DCDriveListItem drive : drives) {
-            List<UserDriveListEventItem> userDriveListItems = eventService.getTotalEventCntByType(drive.getDriveId()).stream()
+            List<UserDriveListEventItem> userDriveListItems = analysisService.getTotalEventCntByType(drive.getDriveId()).stream()
                     .map(item -> UserDriveListEventItem.builder()
                             .type(item.getType())
                             .count(item.getCount())
