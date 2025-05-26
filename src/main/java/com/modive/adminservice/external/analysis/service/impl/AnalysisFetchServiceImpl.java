@@ -3,16 +3,16 @@ package com.modive.adminservice.external.analysis.service.impl;
 import com.modive.adminservice.api.dashboard.dto.res.TotalEventCntByReasonItem;
 import com.modive.adminservice.external.analysis.client.AnalysisClient;
 import com.modive.adminservice.external.analysis.dto.EventsByDriveDTO;
-import com.modive.adminservice.external.analysis.service.AnalysisService;
+import com.modive.adminservice.external.analysis.service.AnalysisFetchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AnalysisServiceImpl implements AnalysisService {
+public class AnalysisFetchServiceImpl implements AnalysisFetchService {
 
     private final AnalysisClient analysisClient;
 
@@ -35,5 +35,12 @@ public class AnalysisServiceImpl implements AnalysisService {
     @Override
     public List<TotalEventCntByReasonItem> getTotalEventCntByType() {
         return analysisClient.getTotalEventCntByType();
+    }
+
+
+    // 주행 목록으로 이벤트 발생 목록 받아오는 함수.
+    @Override
+    public Map<Long, List<EventsByDriveDTO>> getTotalEventCntByType(List<Long> driveIds) {
+        return analysisClient.getTotalEventCntByType(driveIds);
     }
 }

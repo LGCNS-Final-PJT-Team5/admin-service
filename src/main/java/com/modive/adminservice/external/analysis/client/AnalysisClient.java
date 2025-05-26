@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * analysis-service와 통신하는 Feign Client.
@@ -37,4 +38,7 @@ public interface AnalysisClient {
      */
     @GetMapping("/events")
     List<TotalEventCntByReasonItem> getTotalEventCntByType();
+
+    @PostMapping("/events/drives")
+    Map<Long, List<EventsByDriveDTO>> getTotalEventCntByType(@RequestBody List<Long> driveIds);
 }
