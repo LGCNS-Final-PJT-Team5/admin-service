@@ -17,7 +17,6 @@ spec:
         app: {{ .Chart.Name }}
         version: {{ .Chart.AppVersion }}
     spec:
-      restartPolicy: Never    # 절대 재시작하지 않음 (운영 단계에서는 수정)
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
