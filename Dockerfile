@@ -7,5 +7,5 @@ RUN gradle build -x test --no-daemon --stacktrace || (echo "Gradle build failed"
 FROM openjdk:17-jdk-slim
 VOLUME /tmp
 COPY --from=builder /home/gradle/project/build/libs/*.jar app.jar
-EXPOSE 8000
+EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
