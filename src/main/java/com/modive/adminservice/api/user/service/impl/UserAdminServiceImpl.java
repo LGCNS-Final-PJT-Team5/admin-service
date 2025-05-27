@@ -5,7 +5,6 @@ import com.modive.adminservice.external.analysis.dto.EventsByDriveDTO;
 import com.modive.adminservice.external.analysis.service.AnalysisFetchService;
 
 import com.modive.adminservice.api.user.dto.res.*;
-import com.modive.adminservice.domain.event.service.EventService;
 
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListItem;
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListResData;
@@ -265,7 +264,6 @@ public class UserAdminServiceImpl implements UserAdminService {
         Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
         Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
-        // return enrichDriveItems(drives, rewardMap, events);
         List<UserDriveListItem> enriched = enrichDriveItems(drives, rewardMap,events);
 
         return UserDriveListRes.builder()
