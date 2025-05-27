@@ -1,4 +1,4 @@
-replicaCount: 0
+replicaCount: 1
 
 image:
   repository: 026274465258.dkr.ecr.ap-northeast-2.amazonaws.com/admin-service
@@ -9,10 +9,18 @@ service:
   type: ClusterIP   # 클러스터 내부에서만 접근 가능 (기본값)
   port: 80
 
-# 헬스체크 설정 (권장)
+# 헬스체크 설정
 healthCheck:
   enabled: true
   path: /actuator/health
   port: 8080
   initialDelaySeconds: 30
   periodSeconds: 10
+
+# Admin Service Config 요소
+config:
+  server:
+    port: 8080
+  app:
+    name: admin-service
+  swagger.enabled: true
