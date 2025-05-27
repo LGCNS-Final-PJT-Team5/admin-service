@@ -5,6 +5,7 @@ import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
  * reward-service와 통신하는 Feign Client.
  */
 
+@Lazy
 @FeignClient(name="reward-service")
 public interface RewardClient {
 

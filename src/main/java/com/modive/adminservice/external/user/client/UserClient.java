@@ -4,6 +4,7 @@ import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 /**
  * user-service와 통신하는 Feign Client.
  */
+
+@Lazy
 @FeignClient(name="user-service")
 public interface UserClient {
     /**
