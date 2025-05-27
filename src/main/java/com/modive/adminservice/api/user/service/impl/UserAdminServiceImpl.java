@@ -1,7 +1,8 @@
 package com.modive.adminservice.api.user.service.impl;
 
 //import com.modive.adminservice.external.client.reward.RewardClient;
-import com.modive.adminservice.domain.event.service.EventService;
+import com.modive.adminservice.external.analysis.dto.EventsByDriveDTO;
+import com.modive.adminservice.external.analysis.service.AnalysisFetchService;
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListItem;
 import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,7 +39,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     private final UserFetchService userFetchService;
     private final DashboardFetchService dashboardFetchService;
     private final RewardFetchService rewardFetchService;
-    private final EventService eventService;
+    private final AnalysisFetchService analysisFetchService;
     private final RewardClient rewardClient;
 
     /**
@@ -219,15 +221,17 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @param rewardMap 리워드 서비스에서 조회한 리워드 내역
      * @return 주행 정보
      */
-    private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap) {
+    private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap, Map<Long, List<EventsByDriveDTO>> events) {
         List<UserDriveListItem> userDriveItems = new ArrayList<>();
         for (DCDriveListItem drive : drives) {
-            List<UserDriveListEventItem> userDriveListItems = eventService.getTotalEventCntByType(drive.getDriveId()).stream()
+
+            List<UserDriveListEventItem> userDriveListItems = events.get(drive.getDriveId()).stream()
                     .map(item -> UserDriveListEventItem.builder()
                             .type(item.getType())
                             .count(item.getCount())
                             .build())
                     .collect(Collectors.toList());
+
 
             UserDriveListItem userDriveListItem = UserDriveListItem.builder()
                     .date(drive.getDate())
@@ -256,7 +260,8 @@ public class UserAdminServiceImpl implements UserAdminService {
 
         List<Long> driveIds = extractDriveIds(drives);
         Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
+        Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
-        return enrichDriveItems(drives, rewardMap);
+        return enrichDriveItems(drives, rewardMap, events);
     }
 }

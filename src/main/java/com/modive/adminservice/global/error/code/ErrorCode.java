@@ -2,7 +2,6 @@ package com.modive.adminservice.global.error.code;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.apache.hc.client5.http.ssl.HttpsSupport;
 import org.springframework.http.HttpStatus;
 
 @Getter
