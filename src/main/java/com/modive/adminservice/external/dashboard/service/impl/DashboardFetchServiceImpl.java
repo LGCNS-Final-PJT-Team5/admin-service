@@ -46,21 +46,23 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
      }
 
     /**
-     * 대시보드 서비스에서 특정 사용자의 운전 내역 리스트 조회
+     /**
+     * 대시보드 서비스에서 특정 사용자의 운전 내역 리스트 조회 (커서 기반)
      *
      * @param userId 사용자 ID
-     * @return 운전 내역 리스트
+     * @param pageSize 페이지 크기
+     * @param startTime 커서 startTime
+     * @param driveId 커서 driveId
+     * @return 커서 정보 포함된 응답
      */
     @Override
-    public List<DCDriveListItem> fetchDriveListByUserId(Long userId) {
-        CommonRes<DCDriveListResData> res = dashBoardClient.getDrivesByUserId(userId);
+    public DCDriveListResData fetchDriveListByUserId(Long userId,int pageSize, String startTime, String driveId) {
+        CommonRes<DCDriveListResData> res = dashBoardClient.getDrivesByUserId(userId,pageSize, startTime, driveId);
         if (res == null || res.data == null) {
             log.warn("DashboardClient.getDrivesByUserId(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-
-        return res.getData().getDriveHistory();
-    }
+        return res.getData();    }
 
     /**
      *  대시보드 서비스에서 누적 주행 횟수와 증감률 조회

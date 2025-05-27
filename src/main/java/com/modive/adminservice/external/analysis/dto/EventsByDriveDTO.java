@@ -1,4 +1,4 @@
-package com.modive.adminservice.domain.event.dto;
+package com.modive.adminservice.external.analysis.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EventTotalCntByTypeDTO {
-    private String reason;
+public class EventsByDriveDTO {
+    private String type;
     private Long count;
 }

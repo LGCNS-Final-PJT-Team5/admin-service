@@ -1,8 +1,13 @@
 package com.modive.adminservice.api.user.service.impl;
 
 //import com.modive.adminservice.external.client.reward.RewardClient;
-import com.modive.adminservice.domain.event.service.EventService;
+import com.modive.adminservice.external.analysis.dto.EventsByDriveDTO;
+import com.modive.adminservice.external.analysis.service.AnalysisFetchService;
+
+import com.modive.adminservice.api.user.dto.res.*;
+
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListItem;
+import com.modive.adminservice.external.dashboard.dto.res.DCDriveListResData;
 import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
 import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
@@ -11,10 +16,6 @@ import com.modive.adminservice.external.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.user.dto.res.UCUserListItem;
 import com.modive.adminservice.global.util.DateUtils;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
-import com.modive.adminservice.api.user.dto.res.UserDriveListEventItem;
-import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
-import com.modive.adminservice.api.user.dto.res.UserListItem;
-import com.modive.adminservice.api.user.dto.res.UserRewardItem;
 import com.modive.adminservice.external.dashboard.service.DashboardFetchService;
 import com.modive.adminservice.external.reward.service.RewardFetchService;
 import com.modive.adminservice.external.user.service.UserFetchService;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,7 +39,7 @@ public class UserAdminServiceImpl implements UserAdminService {
     private final UserFetchService userFetchService;
     private final DashboardFetchService dashboardFetchService;
     private final RewardFetchService rewardFetchService;
-    private final EventService eventService;
+    private final AnalysisFetchService analysisFetchService;
     private final RewardClient rewardClient;
 
     /**
@@ -219,15 +221,17 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @param rewardMap 리워드 서비스에서 조회한 리워드 내역
      * @return 주행 정보
      */
-    private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap) {
+    private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap, Map<Long, List<EventsByDriveDTO>> events) {
         List<UserDriveListItem> userDriveItems = new ArrayList<>();
         for (DCDriveListItem drive : drives) {
-            List<UserDriveListEventItem> userDriveListItems = eventService.getTotalEventCntByType(drive.getDriveId()).stream()
+
+            List<UserDriveListEventItem> userDriveListItems = events.get(drive.getDriveId()).stream()
                     .map(item -> UserDriveListEventItem.builder()
                             .type(item.getType())
                             .count(item.getCount())
                             .build())
                     .collect(Collectors.toList());
+
 
             UserDriveListItem userDriveListItem = UserDriveListItem.builder()
                     .date(drive.getDate())
@@ -246,17 +250,26 @@ public class UserAdminServiceImpl implements UserAdminService {
      * 사용자의 운전 내역 조회
      *
      * @param userId 유저 ID
-     * @param page 페이지 번호
-     * @param pageSize 페이지당 데이터 개수
+     * @param pageSize 한 번에 가져올 항목 수
+     * @param startTime [커서] 마지막 startTime
+     * @param driveId [커서] 마지막 driveId
      * @return 운전 내역 리스트
      */
     @Override
-    public List<UserDriveListItem> adminGetUserDriveList(Long userId, int page, int pageSize) {
-        List<DCDriveListItem> drives = dashboardFetchService.fetchDriveListByUserId(userId);
+    public UserDriveListRes adminGetUserDriveList(Long userId, int pageSize, String startTime, String driveId ) {
+        DCDriveListResData dashboardRes = dashboardFetchService.fetchDriveListByUserId(userId, pageSize, startTime, driveId);
+        List<DCDriveListItem> drives = dashboardRes.getDriveHistory();
 
         List<Long> driveIds = extractDriveIds(drives);
         Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
+        Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
-        return enrichDriveItems(drives, rewardMap);
+        List<UserDriveListItem> enriched = enrichDriveItems(drives, rewardMap,events);
+
+        return UserDriveListRes.builder()
+                .driveHistory(enriched)
+                .startTime(dashboardRes.getStartTime())
+                .driveId(dashboardRes.getDriveId())
+                .build();
     }
 }
