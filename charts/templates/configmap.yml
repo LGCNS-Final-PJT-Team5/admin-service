@@ -8,7 +8,7 @@ metadata:
 data:
   application.yml: |
     server:
-      port: ${{ .Values.server.port }}
+      port: ${{ .Values.config.server.port }}
     spring:
       application:
         name: ${{ .Values.config.app.name }}
