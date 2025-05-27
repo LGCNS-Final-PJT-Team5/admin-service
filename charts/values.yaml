@@ -23,4 +23,5 @@ config:
     port: 8080
   app:
     name: admin-service
-  swagger.enabled: true
+  swagger:
+    enabled: true
