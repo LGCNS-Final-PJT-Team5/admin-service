@@ -1,5 +1,8 @@
 package com.modive.adminservice.external.user.service.impl;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.modive.adminservice.external.dashboard.dto.res.DCDriveListResData;
 import com.modive.adminservice.external.user.client.UserClient;
 import com.modive.adminservice.external.user.dto.res.*;
 import com.modive.adminservice.global.dto.res.CommonRes;
@@ -49,14 +52,39 @@ public class UserFetchServiceImpl implements UserFetchService {
      */
     @Override
     public List<UCUserListItem> fetchSearchUsers(String searchKeyword) {
-        CommonRes<UCSearchUserResData> userClientRes = userClient.searchUser(searchKeyword);
-        if (userClientRes == null || userClientRes.data == null) {
+        CommonRes<?> rawRes = userClient.searchUser(searchKeyword);
+
+        if (rawRes == null || rawRes.getData() == null) {
             log.warn("UserClient.getUserList(searchKeyword = {}) - response or data is null", searchKeyword);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        return userClientRes.getData().getSearchResult();
+        ObjectMapper mapper = new ObjectMapper();
+        UCSearchUserResData data = mapper.convertValue(rawRes.getData(), UCSearchUserResData.class);
+        List<UCUserListItem> parsed = mapper.convertValue(
+                data.getSearchResult(),
+                new TypeReference<List<UCUserListItem>>() {}
+        );
+
+        log.info("Dashboard Response: {}", parsed);
+        return parsed;
     }
+
+//    @Override
+//    public List<UCUserListItem> fetchSearchUsers(String searchKeyword) {
+//        CommonRes<UCSearchUserResData> userClientRes = userClient.searchUser(searchKeyword);
+//        if (userClientRes == null || userClientRes.data == null) {
+//            log.warn("UserClient.getUserList(searchKeyword = {}) - response or data is null", searchKeyword);
+//            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+//        }
+//        ObjectMapper mapper = new ObjectMapper();
+//        List<UCUserListItem> parsed = mapper.convertValue(
+//                userClientRes.getData().getSearchResult(),
+//                new TypeReference<List<UCUserListItem>>() {}
+//        );
+//        log.info("Dashboard Response: {}", parsed);
+//        return parsed;
+//    }
 
     /**
      * 사용자 서비스에서 사용자 상세 데이터 조회

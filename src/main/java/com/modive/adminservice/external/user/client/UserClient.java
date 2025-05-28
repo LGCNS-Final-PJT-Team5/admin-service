@@ -27,7 +27,7 @@ public interface UserClient {
      * @param searchKeyword 검색어
      * @return CommonRes 형태의 검색 결과 응답
      */
-    @GetMapping("/user")
+    @GetMapping("/user/search")
     CommonRes searchUser(@RequestParam String searchKeyword);
 
     /**

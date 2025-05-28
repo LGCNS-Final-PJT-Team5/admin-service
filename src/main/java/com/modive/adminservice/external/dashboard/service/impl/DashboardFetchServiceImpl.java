@@ -38,10 +38,18 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        Map<Long, Integer> driveCountMap = new HashMap<>();
-        for (DCDriveCountItem driveCount : dashboardClientRes.data.getDriveCountByUser()) {
-            driveCountMap.put(driveCount.getUserId(), driveCount.getDriveCount());
-        }
+         ObjectMapper mapper = new ObjectMapper();
+
+         //  LinkedHashMap -> DCDriveCountResData 로 변환
+         DCDriveCountResData parsed = mapper.convertValue(
+                 dashboardClientRes.getData(),
+                 DCDriveCountResData.class
+         );
+
+         Map<Long, Integer> driveCountMap = new HashMap<>();
+         for (DCDriveCountItem driveCount : parsed.getDriveCountByUser()) {
+             driveCountMap.put(driveCount.getUserId(), driveCount.getDriveCount());
+         }
 
         return driveCountMap;
      }
