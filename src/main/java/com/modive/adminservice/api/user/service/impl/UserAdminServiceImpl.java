@@ -3,7 +3,11 @@ package com.modive.adminservice.api.user.service.impl;
 //import com.modive.adminservice.external.client.reward.RewardClient;
 import com.modive.adminservice.external.analysis.dto.EventsByDriveDTO;
 import com.modive.adminservice.external.analysis.service.AnalysisFetchService;
+
+import com.modive.adminservice.api.user.dto.res.*;
+
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListItem;
+import com.modive.adminservice.external.dashboard.dto.res.DCDriveListResData;
 import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
 import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
@@ -12,10 +16,6 @@ import com.modive.adminservice.external.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.user.dto.res.UCUserListItem;
 import com.modive.adminservice.global.util.DateUtils;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
-import com.modive.adminservice.api.user.dto.res.UserDriveListEventItem;
-import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
-import com.modive.adminservice.api.user.dto.res.UserListItem;
-import com.modive.adminservice.api.user.dto.res.UserRewardItem;
 import com.modive.adminservice.external.dashboard.service.DashboardFetchService;
 import com.modive.adminservice.external.reward.service.RewardFetchService;
 import com.modive.adminservice.external.user.service.UserFetchService;
@@ -250,18 +250,40 @@ public class UserAdminServiceImpl implements UserAdminService {
      * 사용자의 운전 내역 조회
      *
      * @param userId 유저 ID
-     * @param page 페이지 번호
-     * @param pageSize 페이지당 데이터 개수
+     * @param pageSize 한 번에 가져올 항목 수
+     * @param startTime [커서] 마지막 startTime
+     * @param driveId [커서] 마지막 driveId
      * @return 운전 내역 리스트
      */
     @Override
-    public List<UserDriveListItem> adminGetUserDriveList(Long userId, int page, int pageSize) {
-        List<DCDriveListItem> drives = dashboardFetchService.fetchDriveListByUserId(userId);
+    public UserDriveListRes adminGetUserDriveList(Long userId, int pageSize, String startTime, String driveId ) {
+        DCDriveListResData dashboardRes = dashboardFetchService.fetchDriveListByUserId(userId, pageSize, startTime, driveId);
+        List<DCDriveListItem> drives = dashboardRes.getDriveHistory().getList();
 
         List<Long> driveIds = extractDriveIds(drives);
         Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
         Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
-        return enrichDriveItems(drives, rewardMap, events);
+//        // 테스트용 Mock: 리워드 맵을 빈 값 또는 더미 값으로 대체
+//        Map<Long, Integer> rewardMap = new HashMap<>();
+//        for (Long driveIdItem : driveIds) {
+//            rewardMap.put(driveIdItem, 1); // 또는 임의의 값 (예: 10)
+//        }
+//
+//        // 테스트용 Mock: 이벤트 맵도 빈 값 또는 더미 이벤트로 대체
+//        Map<Long, List<EventsByDriveDTO>> events = new HashMap<>();
+//        for (Long driveIdItem : driveIds) {
+//            events.put(driveIdItem, List.of(
+//                    new EventsByDriveDTO("SPEEDING", 1L),
+//                    new EventsByDriveDTO("HARSH_BRAKING", 2L)
+//            ));
+//        }
+        List<UserDriveListItem> enriched = enrichDriveItems(drives, rewardMap, events);
+
+        return UserDriveListRes.builder()
+                .driveHistory(enriched)
+                .startTime(dashboardRes.getDriveHistory().getStartTime())
+                .driveId(dashboardRes.getDriveHistory().getDriveId())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.modive.adminservice.api.user.controller;
 
+import com.modive.adminservice.api.user.dto.res.UserDriveListRes;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
@@ -34,9 +35,9 @@ public class UserController {
     @Operation(summary = "사용자 전체 목록 조회", description = "등록된 전체 사용자를 페이징으로 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
-            content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
+                    content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
-                content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
     public ResponseEntity<CommonRes> getUserList(
             @Parameter(name = "page", description = "페이지 번호", example = "1", required = true)
@@ -61,7 +62,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "Success",
                     content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
-                content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
+                    content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
     public ResponseEntity<CommonRes> searchUser(
             @Parameter(name = "searchKeyword", description = "사용자 이메일", example = "user@modive.com", required = true)
@@ -179,8 +180,8 @@ public class UserController {
         );
     }
 
-    @GetMapping("/{userId}/drives")
-    @Operation(summary = "사용자 주행 이력 조회", description = "userId 기준으로 운전 기록을 페이징으로 조회합니다.")
+    @GetMapping("/drives/{userId}")
+    @Operation(summary = "사용자 주행 이력 조회(무한 스크롤)", description = "userId 기준으로 최신순 주행 기록을 커서 기반으로 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
                     content = {@Content(schema = @Schema(implementation = CommonRes.class))}),
@@ -193,16 +194,23 @@ public class UserController {
             @Schema(description = "유저 ID", example = "1")
             @PathVariable("userId") Long userId,
 
-            @Parameter(name = "page", description = "페이지 번호", example = "2", required = true)
-            @RequestParam int page,
+            @Parameter(name = "pageSize", description = "한 번에 가져올 항목 수", example = "10", required = false)
+            @RequestParam (name = "pageSize", required = false) Integer pageSize,
 
-            @Parameter(name = "pageSize", description = "페이지당 항목 수", example = "10", required = true)
-            @RequestParam int pageSize
+            @Parameter(name = "startTime", description = "커서: 마지막 항목의 startTime (최신순)", example = "2024-05-20T12:34:56Z", required = false)
+            @RequestParam(name = "startTime", required = false) String startTime,
+
+            @Parameter(name = "driveId", description = "커서: 마지막 항목의 driveId", example = "abc123", required = false)
+            @RequestParam(name = "driveId", required = false) String driveId
     ) {
-        List<UserDriveListItem> driveListItems = userAdminService.adminGetUserDriveList(userId, page, pageSize);
+        UserDriveListRes result = userAdminService.adminGetUserDriveList(userId, pageSize, startTime, driveId);
 
         Map<String, Object> data = new HashMap<>();
-        data.put("driveHistory", driveListItems);
+        data.put("driveHistory", result.getDriveHistory());
+        data.put("startTime", result.getStartTime());
+        data.put("driveId", result.getDriveId());
+
+        System.out.println(data);
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 운전 내역 조회에 성공하였습니다."),
@@ -210,3 +218,4 @@ public class UserController {
         );
     }
 }
+
