@@ -1,5 +1,4 @@
 package com.modive.adminservice.external.user.service.impl;
-
 import com.modive.adminservice.external.user.client.UserClient;
 import com.modive.adminservice.external.user.dto.res.*;
 import com.modive.adminservice.global.dto.res.CommonRes;
@@ -37,7 +36,6 @@ public class UserFetchServiceImpl implements UserFetchService {
             log.warn("UserClient.getUserList(page={}, pageSize={}) - response or data is null", page, pageSize);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-
         return userClientRes.getData().getUsers();
     }
 
@@ -50,11 +48,11 @@ public class UserFetchServiceImpl implements UserFetchService {
     @Override
     public List<UCUserListItem> fetchSearchUsers(String searchKeyword) {
         CommonRes<UCSearchUserResData> userClientRes = userClient.searchUser(searchKeyword);
+
         if (userClientRes == null || userClientRes.data == null) {
             log.warn("UserClient.getUserList(searchKeyword = {}) - response or data is null", searchKeyword);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-
         return userClientRes.getData().getSearchResult();
     }
 
@@ -100,9 +98,9 @@ public class UserFetchServiceImpl implements UserFetchService {
      */
     @Override
     public void inactiveUser(Long userId) {
-        CommonRes userClientRes = userClient.getUserDetail(userId);
+        CommonRes userClientRes = userClient.deleteUser(userId);
         if (userClientRes == null || userClientRes.data == null) {
-            log.warn("UserClient.getUserDetail(userId = {}) - response or data is null", userId);
+            log.warn("UserClient.deactivateUser(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
     }

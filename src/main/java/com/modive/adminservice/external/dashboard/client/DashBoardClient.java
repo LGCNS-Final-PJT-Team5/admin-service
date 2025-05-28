@@ -1,6 +1,9 @@
 package com.modive.adminservice.external.dashboard.client;
 
+import com.modive.adminservice.external.dashboard.dto.res.DCDriveCountResData;
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListResData;
+import com.modive.adminservice.external.dashboard.dto.res.DCMontlyDriveResData;
+import com.modive.adminservice.external.dashboard.dto.res.DCTotalDriveResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +24,7 @@ public interface DashBoardClient {
      * @return CommonRes 형태로 사용자별 주행 횟수 정보가 담긴 응답 반환
      */
     @PostMapping("/dashboard/drives/by-user")
-    CommonRes getDriveCountByUser(@RequestBody Map<String, List<Long>> body);
+    CommonRes<DCDriveCountResData>  getDriveCountByUser(@RequestBody Map<String, List<Long>> body);
 
     /**
      * 사용자 ID를 전달하여, 해당 사용자의 운전 내역 조회.
@@ -37,9 +40,9 @@ public interface DashBoardClient {
             @RequestParam(name = "driveId", required = false) String driveId
     );
     @GetMapping("/dashboard/drives/total")
-    CommonRes getTotalDriveCount();
+    CommonRes<DCTotalDriveResData> getTotalDriveCount();
 
     @GetMapping("/dashboard/drives/monthly-stats")
-    CommonRes getMonthlyStats();
+    CommonRes<DCMontlyDriveResData> getMonthlyStats();
 }
 

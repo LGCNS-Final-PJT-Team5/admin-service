@@ -126,7 +126,7 @@ public class UserController {
         );
     }
 
-    @DeleteMapping("/{userId}")
+    @PatchMapping("/{userId}/delete")
     @Operation(summary = "사용자 비활성화", description = "userId로 사용자를 비활성화합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",

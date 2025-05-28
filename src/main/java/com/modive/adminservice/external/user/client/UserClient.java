@@ -1,13 +1,11 @@
 package com.modive.adminservice.external.user.client;
 
+import com.modive.adminservice.external.user.dto.res.*;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * user-service와 통신하는 Feign Client.
@@ -22,7 +20,7 @@ public interface UserClient {
      * @return CommonRes 형태의 사용자 목록 응답
      */
     @GetMapping("/user/list")
-    CommonRes getUserList(@RequestParam int page, @RequestParam int pageSize);
+    CommonRes<UCUserListResData> getUserList(@RequestParam int page, @RequestParam int pageSize);
 
     /**
      * 이메일을 기반으로 사용자 조회
@@ -30,8 +28,8 @@ public interface UserClient {
      * @param searchKeyword 검색어
      * @return CommonRes 형태의 검색 결과 응답
      */
-    @GetMapping("/user")
-    CommonRes searchUser(@RequestParam String searchKeyword);
+    @GetMapping("/user/search")
+    CommonRes<UCSearchUserResData> searchUser(@RequestParam String searchKeyword);
 
     /**
      * userId를 기반으로 사용자 상세 조회
@@ -40,7 +38,7 @@ public interface UserClient {
      * @return CommonRes 형태의 상세 조회 결과 응답
      */
     @GetMapping("/user/{userId}")
-    CommonRes getUserDetail(@PathVariable Long userId);
+    CommonRes<UCUserDetailResData> getUserDetail(@PathVariable Long userId);
 
     /**
      * 페이지네이션 정보를 기반으로 사용자 필터링 결과 조회
@@ -49,7 +47,7 @@ public interface UserClient {
      * @return CommonRes 형태의 필터링 결과 응답
      */
     @GetMapping("/user/filter")
-    CommonRes getFilteredUser(@SpringQueryMap UserFilterReq params);
+    CommonRes<UCUserListResData> getFilteredUser(@SpringQueryMap UserFilterReq params);
 
     /**
      * userId를 기반으로 사용자 비활성화
@@ -57,15 +55,15 @@ public interface UserClient {
      * @param userId 유저ID
      * @return 비활성화 결과
      */
-    @DeleteMapping("/user/{userId}")
-    CommonRes deleteUser(@PathVariable Long userId);
+    @PatchMapping("/user/{userId}/delete")
+    CommonRes<Void> deleteUser(@PathVariable Long userId);
 
     @GetMapping("/user/total")
-    CommonRes getTotalUser();
+    CommonRes<UCTotalUserResData> getTotalUser();
 
     @GetMapping("/user/total-cars")
-    CommonRes getTotalUserCars();
+    CommonRes<UCTotalDeviceResData> getTotalUserCars();
 
     @GetMapping("/user/monthly-stats")
-    CommonRes getMonthlyStats();
+    CommonRes<UCUserStatisticsResData> getMonthlyStats();
 }
