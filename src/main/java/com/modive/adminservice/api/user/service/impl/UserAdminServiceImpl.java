@@ -261,27 +261,24 @@ public class UserAdminServiceImpl implements UserAdminService {
         List<DCDriveListItem> drives = dashboardRes.getDriveHistory().getList();
 
         List<Long> driveIds = extractDriveIds(drives);
-//        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
-//        Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
+        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
+        Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
-        // ✅ Mock: 리워드 맵을 빈 값 또는 더미 값으로 대체
-        Map<Long, Integer> rewardMap = new HashMap<>();
-        for (Long driveIdItem : driveIds) {
-            rewardMap.put(driveIdItem, 1); // 또는 임의의 값 (예: 10)
-        }
-
-        // ✅ Mock: 이벤트 맵도 빈 값 또는 더미 이벤트로 대체
-        Map<Long, List<EventsByDriveDTO>> events = new HashMap<>();
-        for (Long driveIdItem : driveIds) {
-            events.put(driveIdItem, List.of(
-                    new EventsByDriveDTO("SPEEDING", 1L),
-                    new EventsByDriveDTO("HARSH_BRAKING", 2L)
-            ));
-        }
-
+//        // 테스트용 Mock: 리워드 맵을 빈 값 또는 더미 값으로 대체
+//        Map<Long, Integer> rewardMap = new HashMap<>();
+//        for (Long driveIdItem : driveIds) {
+//            rewardMap.put(driveIdItem, 1); // 또는 임의의 값 (예: 10)
+//        }
+//
+//        // 테스트용 Mock: 이벤트 맵도 빈 값 또는 더미 이벤트로 대체
+//        Map<Long, List<EventsByDriveDTO>> events = new HashMap<>();
+//        for (Long driveIdItem : driveIds) {
+//            events.put(driveIdItem, List.of(
+//                    new EventsByDriveDTO("SPEEDING", 1L),
+//                    new EventsByDriveDTO("HARSH_BRAKING", 2L)
+//            ));
+//        }
         List<UserDriveListItem> enriched = enrichDriveItems(drives, rewardMap, events);
-
-        log.info("Dashboard Response: {}", dashboardRes);
 
         return UserDriveListRes.builder()
                 .driveHistory(enriched)
