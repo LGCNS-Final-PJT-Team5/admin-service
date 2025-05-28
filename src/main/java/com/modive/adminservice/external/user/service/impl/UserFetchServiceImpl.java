@@ -100,9 +100,9 @@ public class UserFetchServiceImpl implements UserFetchService {
      */
     @Override
     public void inactiveUser(Long userId) {
-        CommonRes userClientRes = userClient.getUserDetail(userId);
+        CommonRes userClientRes = userClient.deleteUser(userId);
         if (userClientRes == null || userClientRes.data == null) {
-            log.warn("UserClient.getUserDetail(userId = {}) - response or data is null", userId);
+            log.warn("UserClient.deactivateUser(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
     }

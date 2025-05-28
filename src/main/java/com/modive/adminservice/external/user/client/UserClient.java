@@ -4,10 +4,7 @@ import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * user-service와 통신하는 Feign Client.
@@ -57,7 +54,7 @@ public interface UserClient {
      * @param userId 유저ID
      * @return 비활성화 결과
      */
-    @DeleteMapping("/user/{userId}")
+    @PatchMapping("/user/{userId}/delete")
     CommonRes deleteUser(@PathVariable Long userId);
 
     @GetMapping("/user/total")
