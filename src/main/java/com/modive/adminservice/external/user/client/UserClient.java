@@ -1,5 +1,6 @@
 package com.modive.adminservice.external.user.client;
 
+import com.modive.adminservice.external.user.dto.res.*;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -19,7 +20,7 @@ public interface UserClient {
      * @return CommonRes 형태의 사용자 목록 응답
      */
     @GetMapping("/user/list")
-    CommonRes getUserList(@RequestParam int page, @RequestParam int pageSize);
+    CommonRes<UCUserListResData> getUserList(@RequestParam int page, @RequestParam int pageSize);
 
     /**
      * 이메일을 기반으로 사용자 조회
@@ -28,7 +29,7 @@ public interface UserClient {
      * @return CommonRes 형태의 검색 결과 응답
      */
     @GetMapping("/user/search")
-    CommonRes searchUser(@RequestParam String searchKeyword);
+    CommonRes<UCSearchUserResData> searchUser(@RequestParam String searchKeyword);
 
     /**
      * userId를 기반으로 사용자 상세 조회
@@ -37,7 +38,7 @@ public interface UserClient {
      * @return CommonRes 형태의 상세 조회 결과 응답
      */
     @GetMapping("/user/{userId}")
-    CommonRes getUserDetail(@PathVariable Long userId);
+    CommonRes<UCUserDetailResData> getUserDetail(@PathVariable Long userId);
 
     /**
      * 페이지네이션 정보를 기반으로 사용자 필터링 결과 조회
@@ -46,7 +47,7 @@ public interface UserClient {
      * @return CommonRes 형태의 필터링 결과 응답
      */
     @GetMapping("/user/filter")
-    CommonRes getFilteredUser(@SpringQueryMap UserFilterReq params);
+    CommonRes<UCUserListResData> getFilteredUser(@SpringQueryMap UserFilterReq params);
 
     /**
      * userId를 기반으로 사용자 비활성화
@@ -55,14 +56,14 @@ public interface UserClient {
      * @return 비활성화 결과
      */
     @PatchMapping("/user/{userId}/delete")
-    CommonRes deleteUser(@PathVariable Long userId);
+    CommonRes<Void> deleteUser(@PathVariable Long userId);
 
     @GetMapping("/user/total")
-    CommonRes getTotalUser();
+    CommonRes<UCTotalUserResData> getTotalUser();
 
     @GetMapping("/user/total-cars")
-    CommonRes getTotalUserCars();
+    CommonRes<UCTotalDeviceResData> getTotalUserCars();
 
     @GetMapping("/user/monthly-stats")
-    CommonRes getMonthlyStats();
+    CommonRes<UCUserStatisticsResData> getMonthlyStats();
 }

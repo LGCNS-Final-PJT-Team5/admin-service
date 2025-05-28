@@ -37,21 +37,12 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
             log.warn("DashboardClient.getDriveCountByUser - response or data is null");
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-
-         ObjectMapper mapper = new ObjectMapper();
-
-         //  LinkedHashMap -> DCDriveCountResData 로 변환
-         DCDriveCountResData parsed = mapper.convertValue(
-                 dashboardClientRes.getData(),
-                 DCDriveCountResData.class
-         );
-
          Map<Long, Integer> driveCountMap = new HashMap<>();
-         for (DCDriveCountItem driveCount : parsed.getDriveCountByUser()) {
+         for (DCDriveCountItem driveCount : dashboardClientRes.data.getDriveCountByUser()) {
              driveCountMap.put(driveCount.getUserId(), driveCount.getDriveCount());
          }
 
-        return driveCountMap;
+         return driveCountMap;
      }
 
     /**
@@ -71,11 +62,8 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
             log.warn("DashboardClient.getDrivesByUserId(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-        ObjectMapper mapper = new ObjectMapper();
-        DCDriveListResData parsed = mapper.convertValue(res.getData(), DCDriveListResData.class);
-
-        log.info("Dashboard Response: {}", parsed);
-        return parsed;
+        log.info("Dashboard Response: {}", res.data);
+        return res.data;
     }
 
     /**
