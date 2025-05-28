@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * dashboard-service와 통신하는 Feign Client.
  */
-@FeignClient(name="dashboard-service")
+@FeignClient(name = "dashboard-service")
 public interface DashBoardClient {
 
     /**
@@ -32,7 +32,7 @@ public interface DashBoardClient {
     @GetMapping("/dashboard/drives/{userId}")
     CommonRes<DCDriveListResData> getDrivesByUserId(
             @PathVariable("userId") Long userId,
-            @RequestParam(name = "pageSize") int pageSize,
+            @RequestParam(name = "pageSize" , required = false) int pageSize,
             @RequestParam(name = "startTime", required = false) String startTime,
             @RequestParam(name = "driveId", required = false) String driveId
     );
@@ -42,3 +42,4 @@ public interface DashBoardClient {
     @GetMapping("/dashboard/drives/monthly-stats")
     CommonRes getMonthlyStats();
 }
+

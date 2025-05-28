@@ -195,7 +195,7 @@ public class UserController {
             @PathVariable("userId") Long userId,
 
             @Parameter(name = "pageSize", description = "한 번에 가져올 항목 수", example = "10", required = false)
-            @RequestParam int pageSize,
+            @RequestParam (name = "pageSize", required = false) Integer pageSize,
 
             @Parameter(name = "startTime", description = "커서: 마지막 항목의 startTime (최신순)", example = "2024-05-20T12:34:56Z", required = false)
             @RequestParam(name = "startTime", required = false) String startTime,
@@ -209,6 +209,8 @@ public class UserController {
         data.put("driveHistory", result.getDriveHistory());
         data.put("startTime", result.getStartTime());
         data.put("driveId", result.getDriveId());
+
+        System.out.println(data);
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 운전 내역 조회에 성공하였습니다."),
