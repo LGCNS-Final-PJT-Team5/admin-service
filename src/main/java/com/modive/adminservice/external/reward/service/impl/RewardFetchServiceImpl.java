@@ -1,5 +1,6 @@
 package com.modive.adminservice.external.reward.service.impl;
 
+import com.modive.adminservice.api.reward.dto.*;
 import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
 import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
@@ -10,8 +11,10 @@ import com.modive.adminservice.global.error.exception.RestApiException;
 import com.modive.adminservice.external.reward.service.RewardFetchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,9 +23,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 public class RewardFetchServiceImpl implements RewardFetchService {
+    private final RewardClient rewardClient;
 
-    private RewardClient rewardClient;
-
+    //<editor-folder desc="REWARD FOR USER REQUEST">
     /**
      * 리워드 서비스에서 씨앗 발급 내역 필터링
      *
@@ -74,4 +77,92 @@ public class RewardFetchServiceImpl implements RewardFetchService {
 
         return res.getData().getTotalIssuedRewards();
     }
+
+    //</editor-folder desc="REWARD FOR USER REQUEST">
+
+
+    //<editor-folder desc="REWARD FOR REWARD REQUEST">
+    @Override
+    public RewardsSummaryDto fetchRewardSummary(String userId) {
+        CommonRes<RewardsSummaryDto> total = rewardClient.fetchRewardSummaryTotal(userId);
+        CommonRes<RewardsSummaryDto> monthly = rewardClient.fetchRewardSummaryMonthly(userId);
+        CommonRes<RewardsSummaryDto> daily = rewardClient.fetchRewardSummaryDaily(userId);
+        CommonRes<RewardsSummaryDto> perUser = rewardClient.fetchRewardSummaryPerUser(userId);
+
+        CommonRes<RewardsSummaryDto> res = new CommonRes<RewardsSummaryDto>();
+        RewardsSummaryDto merged = new RewardsSummaryDto();
+
+        if (total.getData() != null) {
+            merged.setTotalIssued(total.getData().getTotalIssued());
+        }
+        if (monthly.getData() != null) {
+            merged.setMonthlyIssued(monthly.getData().getMonthlyIssued());
+        }
+        if (daily.getData() != null) {
+            merged.setDailyAverageIssued(daily.getData().getDailyAverageIssued());
+        }
+        if (perUser.getData() != null) {
+            merged.setPerUserAverageIssued(perUser.getData().getPerUserAverageIssued());
+        }
+        res.setData(merged);
+
+        if (res.getData() == null) {
+            log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+        return res.getData();
+    }
+
+    @Override
+    public RewardByReasonTotalDto fetchRewardByReasonTotal(String userId) {
+        CommonRes<RewardByReasonTotalDto> res = rewardClient.fetchRewardByReasonTotal(userId);
+        if (res == null || res.getData() == null) {
+            log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+        return res.getData();
+    }
+
+    @Override
+    public RewardByReasonMonthDto fetchRewardByReasonMonth(String userId, int year, int month) {
+        String req = String.format("%d-%02d", year, month);
+        CommonRes<RewardByReasonMonthDto> res = rewardClient.fetchRewardByReasonMonth(userId, req);
+        if (res == null || res.getData() == null) {
+            log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+        return res.getData();
+    }
+
+    @Override
+    public RewardMonthDto fetchRewardMonth(String userId) {
+        CommonRes<RewardMonthDto> res = rewardClient.fetchRewardMonth(userId);
+        if (res == null || res.getData() == null) {
+            log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+        return res.getData();
+    }
+
+    @Override
+    public RewardHistoryDto fetchRewardHistory(String userId, int page, int size) {
+        CommonRes<RewardHistoryDto> res = rewardClient.fetchRewardHistory(userId, page, size);
+        if (res == null || res.getData() == null) {
+            log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+        return res.getData();
+    }
+
+    @Override
+    public RewardFilterDto fetchRewardFilter(String userId, String email, String description, LocalDate startDate, LocalDate endDate, int page, int size) {
+        CommonRes<RewardFilterDto> res = rewardClient.fetchRewardFilter(userId, email, description, startDate, endDate, page, size);
+        if (res == null || res.getData() == null) {
+            log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
+            throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
+        }
+        return res.getData();
+    }
+    //</editor-folder desc="REWARD FOR REWARD REQUEST">
+
 }
