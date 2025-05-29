@@ -47,7 +47,7 @@ public interface UserClient {
      * @return CommonRes 형태의 필터링 결과 응답
      */
     @GetMapping("/user/filter")
-    CommonRes<UCUserListResData> getFilteredUser(@SpringQueryMap UserFilterReq params);
+    CommonRes<UCFilterUserResData> getFilteredUser(@SpringQueryMap UserFilterReq params);
 
     /**
      * userId를 기반으로 사용자 비활성화

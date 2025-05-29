@@ -80,14 +80,13 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 필터링 결과
      */
     @Override
-    public List<UCUserListItem> fetchFilteredUser(UserFilterReq params) {
-        CommonRes<UCUserListResData> userClientRes = userClient.getFilteredUser(params);
+    public UCFilterUserResData fetchFilteredUser(UserFilterReq params) {
+        CommonRes<UCFilterUserResData> userClientRes = userClient.getFilteredUser(params);
         if (userClientRes == null || userClientRes.data == null) {
             log.warn("UserClient.getFilteredUser(params) - response or data is null", params);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-
-        return userClientRes.getData().getUserInfos();
+        return userClientRes.getData();
     }
 
     /**

@@ -12,6 +12,7 @@ import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
 import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.external.reward.dto.res.RCRewardFilterItem;
+import com.modive.adminservice.external.user.dto.res.UCFilterUserResData;
 import com.modive.adminservice.external.user.dto.res.UCUserListItem;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
@@ -135,15 +136,9 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @return 필터링 결과
      */
     @Override
-    public List<UserListItem> adminFilterUser(UserFilterReq req) {
-        List<UCUserListItem> users = userFetchService.fetchFilteredUser(req);
-        List<Long> userIds = users.stream()
-                .map(UCUserListItem::getUserId)
-                .collect(Collectors.toList());
-
-        Map<Long, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
-
-        return mergeUserData(users, driveCountMap);
+    public UCFilterUserResData adminFilterUser(UserFilterReq req) {
+        UCFilterUserResData filteredItem = userFetchService.fetchFilteredUser(req);
+        return filteredItem;
     }
 
     /**
