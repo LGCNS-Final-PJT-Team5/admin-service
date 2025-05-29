@@ -14,6 +14,8 @@ import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.external.reward.dto.res.RCRewardFilterItem;
 import com.modive.adminservice.external.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.user.dto.res.UCUserListItem;
+import com.modive.adminservice.global.error.code.ErrorCode;
+import com.modive.adminservice.global.error.exception.RestApiException;
 import com.modive.adminservice.global.util.DateUtils;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import com.modive.adminservice.external.dashboard.service.DashboardFetchService;
@@ -187,7 +189,7 @@ public class UserAdminServiceImpl implements UserAdminService {
                 .pageSize(pageSize)
                 .build();
 
-        List<RCRewardFilterItem> rewards = rewardFetchService.fetchRewardFilter(req);
+        List<RCRewardFilterItem> rewards = rewardFetchService.fetchRewardFilter(userId, req);
 
         List<UserRewardItem> userRewardItems = new ArrayList<>();
         for (RCRewardFilterItem item : rewards) {
@@ -261,7 +263,12 @@ public class UserAdminServiceImpl implements UserAdminService {
         List<DCDriveListItem> drives = dashboardRes.getDriveHistory().getList();
 
         List<Long> driveIds = extractDriveIds(drives);
-        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
+
+        if (driveIds.isEmpty()) {
+            return new UserDriveListRes();
+        }
+
+        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(userId, new RCRewardByDriveReq(driveIds));
         Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
 //        // 테스트용 Mock: 리워드 맵을 빈 값 또는 더미 값으로 대체

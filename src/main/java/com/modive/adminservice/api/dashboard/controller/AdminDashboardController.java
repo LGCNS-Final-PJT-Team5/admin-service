@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,8 +61,10 @@ public class AdminDashboardController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
                     content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
-    public ResponseEntity<CommonRes> getSummary () {
-        Map<String, TotalCntAndRateItem> dashboardStatistics = adminDashboardService.getDashboardStatistics();
+    public ResponseEntity<CommonRes> getSummary (
+            @RequestHeader("X-USER-ID") Long userId
+    ) {
+        Map<String, TotalCntAndRateItem> dashboardStatistics = adminDashboardService.getDashboardStatistics(userId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("dashboardStatistics", dashboardStatistics);

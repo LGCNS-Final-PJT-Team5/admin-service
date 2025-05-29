@@ -28,7 +28,7 @@ public interface RewardClient {
      * @return CommonRes 형태의 필터링 결과 응답
      */
     @GetMapping("/reward/filter")
-    CommonRes<RCRewardFilterResData> filterReward(@SpringQueryMap RCRewardFilterReq params);
+    CommonRes<RCRewardFilterResData> filterReward(@RequestHeader("X-USER-ID") Long userId, @SpringQueryMap RCRewardFilterReq params);
 
     /**
      * drive ID를 기준으로 리워드 적립 내용 조회
@@ -37,13 +37,13 @@ public interface RewardClient {
      * @return drive ID별 리워드 적립 데이터
      */
     @PostMapping("/reward/by-drive")
-    CommonRes<RCRewardByDriveResData> getRewardByDrive(@RequestBody RCRewardByDriveReq req);
+    CommonRes<RCRewardByDriveResData> getRewardByDrive(@RequestHeader("X-USER-ID") Long userId, @RequestBody RCRewardByDriveReq req);
 
     /**
      * 총 발급된 리워드 수 및 증감률 조회
      */
     @GetMapping("/reward/total-issued")
-    CommonRes<RCTotalRewardResData> getTotalIssuedRewards();
+    CommonRes<RCTotalRewardResData> getTotalIssuedRewards(@RequestHeader("X-USER-ID") Long userId);
 
     // REWARD FOR REWARD REQUEST
     @GetMapping("/reward/stats/total")

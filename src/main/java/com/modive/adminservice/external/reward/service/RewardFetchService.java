@@ -13,9 +13,9 @@ import java.util.Map;
 public interface RewardFetchService {
 
     //REWARD FOR USER REQUEST
-    List<RCRewardFilterItem> fetchRewardFilter(RCRewardFilterReq req);
-    Map<Long, Integer> fetchRewardMapByDrive(RCRewardByDriveReq req);
-    RCRewardTotalCntAndRateItem fetchTotalIssuedRewards();
+    List<RCRewardFilterItem> fetchRewardFilter(Long userId, RCRewardFilterReq req);
+    Map<Long, Integer> fetchRewardMapByDrive(Long userId, RCRewardByDriveReq req);
+    RCRewardTotalCntAndRateItem fetchTotalIssuedRewards(Long userId);
 
 
     // REWARD FOR REWARD REQUEST

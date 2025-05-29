@@ -33,8 +33,8 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * @return 필터링 결과
      */
     @Override
-    public List<RCRewardFilterItem> fetchRewardFilter(RCRewardFilterReq req) {
-        CommonRes<RCRewardFilterResData> res = rewardClient.filterReward(req);
+    public List<RCRewardFilterItem> fetchRewardFilter(Long userId, RCRewardFilterReq req) {
+        CommonRes<RCRewardFilterResData> res = rewardClient.filterReward(userId, req);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.filterReward - response or data is null");
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
@@ -49,8 +49,8 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * @return drive ID별 리워드 조회 결과
      */
     @Override
-    public Map<Long, Integer> fetchRewardMapByDrive(RCRewardByDriveReq req) {
-        CommonRes<RCRewardByDriveResData> res = rewardClient.getRewardByDrive(req);
+    public Map<Long, Integer> fetchRewardMapByDrive(Long userId, RCRewardByDriveReq req) {
+        CommonRes<RCRewardByDriveResData> res = rewardClient.getRewardByDrive(userId, req);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.getRewardByDrive(req = {}) - response or data is null", req.toString());
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
@@ -68,8 +68,8 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * 리워드 서비스에서 발급된 리워드 합계 및 증감률 조회
      */
     @Override
-    public RCRewardTotalCntAndRateItem fetchTotalIssuedRewards() {
-        CommonRes<RCTotalRewardResData> res = rewardClient.getTotalIssuedRewards();
+    public RCRewardTotalCntAndRateItem fetchTotalIssuedRewards(Long userId) {
+        CommonRes<RCTotalRewardResData> res = rewardClient.getTotalIssuedRewards(userId);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
