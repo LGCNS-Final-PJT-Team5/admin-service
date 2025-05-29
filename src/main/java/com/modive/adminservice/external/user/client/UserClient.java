@@ -38,7 +38,7 @@ public interface UserClient {
      * @return CommonRes 형태의 상세 조회 결과 응답
      */
     @GetMapping("/user/{userId}")
-    CommonRes<UCUserDetailResData> getUserDetail(@PathVariable Long userId);
+    CommonRes<UCUserListItem> getUserDetail(@PathVariable Long userId);
 
     /**
      * 페이지네이션 정보를 기반으로 사용자 필터링 결과 조회

@@ -1,12 +1,9 @@
 package com.modive.adminservice.api.user.controller;
 
-import com.modive.adminservice.api.user.dto.res.UserDriveListRes;
+import com.modive.adminservice.api.user.dto.res.*;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
-import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
-import com.modive.adminservice.api.user.dto.res.UserListItem;
-import com.modive.adminservice.api.user.dto.res.UserRewardItem;
 import com.modive.adminservice.api.user.service.UserAdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -93,7 +90,7 @@ public class UserController {
             @Schema(description = "유저 ID", example = "1")
             @PathVariable("userId") Long userId
     ) {
-        UserListItem userListItem = userAdminService.adminGetUserDetail(userId);
+        List<UserListItem> userListItem = userAdminService.adminGetUserDetail(userId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("userDetail", userListItem);

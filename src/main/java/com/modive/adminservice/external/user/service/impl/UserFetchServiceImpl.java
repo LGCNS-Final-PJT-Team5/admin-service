@@ -63,14 +63,14 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 사용자 상세 데이터
      */
     @Override
-    public UCUserDetailResData fetchUserDetail(Long userId) {
-        CommonRes<UCUserDetailResData> userClientRes = userClient.getUserDetail(userId);
+    public List<UCUserListItem> fetchUserDetail(Long userId) {
+        CommonRes<UCUserListItem> userClientRes = userClient.getUserDetail(userId);
         if (userClientRes == null || userClientRes.data == null) {
             log.warn("UserClient.getUserDetail(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        return userClientRes.data;
+        return List.of(userClientRes.data);
     }
 
     /**

@@ -12,7 +12,6 @@ import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
 import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.external.reward.dto.res.RCRewardFilterItem;
-import com.modive.adminservice.external.user.dto.res.UCUserDetailResData;
 import com.modive.adminservice.external.user.dto.res.UCUserListItem;
 import com.modive.adminservice.global.error.code.ErrorCode;
 import com.modive.adminservice.global.error.exception.RestApiException;
@@ -119,30 +118,14 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @return 사용자 상세 데이터
      */
     @Override
-    public UserListItem adminGetUserDetail(Long userId) {
-        UCUserDetailResData user = userFetchService.fetchUserDetail(userId);
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(userId);
+    public List<UserListItem> adminGetUserDetail(Long userId) {
+        List<UCUserListItem> users = userFetchService.fetchUserDetail(userId);
+        List<Long> userIds = users.stream()
+                .map(UCUserListItem::getUserId)
+                .collect(Collectors.toList());
 
         Map<Long, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
-
-        /**
-         * TODO
-         * 유저 서비스에서 특정 사용자 조회 시 응답 값으로
-         * `joinedAt`, `seedBalance`, `isActive` 값 추가 필요
-         * (UCUserDetailResData DTO 참고)
-         */
-        UserListItem userListItem = UserListItem.builder()
-                .userId(userId)
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .experience(DateUtils.getYearsSince(
-                        LocalDate.parse(user.getLicenseDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME).atStartOfDay())
-                )
-                .driveCount(driveCountMap.get(userId))
-                .build();
-
-        return userListItem;
+        return mergeUserData(users, driveCountMap);
     }
 
     /**
