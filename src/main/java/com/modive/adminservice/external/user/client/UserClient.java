@@ -65,5 +65,5 @@ public interface UserClient {
     CommonRes<UCTotalDeviceResData> getTotalUserCars();
 
     @GetMapping("/user/monthly-stats")
-    CommonRes<UCUserStatisticsResData> getMonthlyStats();
+    CommonRes<UCUserStatisticsWrapper> getMonthlyStats();
 }

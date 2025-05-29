@@ -137,15 +137,17 @@ public class UserFetchServiceImpl implements UserFetchService {
      */
     @Override
     public Map<String, Object> fetchUserStatistics() {
-        CommonRes<UCUserStatisticsResData> res = userClient.getMonthlyStats();
+        CommonRes<UCUserStatisticsWrapper> res = userClient.getMonthlyStats();
         if (res == null || res.data == null) {
             log.warn("UserClient.getMonthlyStats() - response or data is null", res);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
+        UCUserStatisticsResData stats = res.getData().getUserStatistics();
+
         Map<String, Object> datas = new HashMap<>();
-        datas.put("summary", res.getData().getSummary());
-        datas.put("userTrend", res.getData().getUserTrend());
+        datas.put("summary", stats.getSummary());
+        datas.put("userTrend", stats.getUserTrend());
 
         return datas;
     }
