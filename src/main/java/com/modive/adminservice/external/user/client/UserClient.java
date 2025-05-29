@@ -55,8 +55,8 @@ public interface UserClient {
      * @param userId 유저ID
      * @return 비활성화 결과
      */
-    @PatchMapping("/user/{userId}/delete")
-    CommonRes<Void> deleteUser(@PathVariable Long userId);
+    @PostMapping("/user/{userId}/delete")
+    CommonRes<String> deleteUser(@PathVariable Long userId);
 
     @GetMapping("/user/total")
     CommonRes<UCTotalUserResData> getTotalUser();
