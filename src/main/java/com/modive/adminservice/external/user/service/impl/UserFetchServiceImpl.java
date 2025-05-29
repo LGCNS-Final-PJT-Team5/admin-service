@@ -36,7 +36,7 @@ public class UserFetchServiceImpl implements UserFetchService {
             log.warn("UserClient.getUserList(page={}, pageSize={}) - response or data is null", page, pageSize);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-        return userClientRes.getData().getUsers();
+        return userClientRes.getData().getUserInfos();
     }
 
     /**
@@ -87,7 +87,7 @@ public class UserFetchServiceImpl implements UserFetchService {
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        return userClientRes.getData().getUsers();
+        return userClientRes.getData().getUserInfos();
     }
 
     /**

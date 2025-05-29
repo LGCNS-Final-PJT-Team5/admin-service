@@ -19,5 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UCUserListResData {
-    private List<UCUserListItem> users;
+    private List<UCUserListItem> userInfos;
+    private int length;
 }
