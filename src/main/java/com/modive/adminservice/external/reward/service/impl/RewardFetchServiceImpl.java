@@ -75,7 +75,7 @@ public class RewardFetchServiceImpl implements RewardFetchService {
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        return res.getData().getTotalIssuedRewards();
+        return res.getData().getTotalIssued();
     }
 
     //</editor-folder desc="REWARD FOR USER REQUEST">

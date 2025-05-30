@@ -42,7 +42,7 @@ public interface RewardClient {
     /**
      * 총 발급된 리워드 수 및 증감률 조회
      */
-    @GetMapping("/reward/total-issued")
+    @GetMapping("/reward/stats/total")
     CommonRes<RCTotalRewardResData> getTotalIssuedRewards(@RequestHeader("X-USER-ID") String userId);
 
     // REWARD FOR REWARD REQUEST
