@@ -28,8 +28,8 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
      * @return 사용자 ID별 운전 횟수 맵
      */
      @Override
-     public Map<Long, Integer> fetchDriveCountMap(List<Long> userIds) {
-        Map<String, List<Long>> clientReqBody = new HashMap<>();
+     public Map<String, Integer> fetchDriveCountMap(List<String> userIds) {
+        Map<String, List<String>> clientReqBody = new HashMap<>();
         clientReqBody.put("userIds", userIds);
 
         CommonRes<DCDriveCountResData> dashboardClientRes = dashBoardClient.getDriveCountByUser(clientReqBody);
@@ -37,7 +37,7 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
             log.warn("DashboardClient.getDriveCountByUser - response or data is null");
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-         Map<Long, Integer> driveCountMap = new HashMap<>();
+         Map<String, Integer> driveCountMap = new HashMap<>();
          for (DCDriveCountItem driveCount : dashboardClientRes.data.getDriveCountByUser()) {
              driveCountMap.put(driveCount.getUserId(), driveCount.getDriveCount());
          }
@@ -56,8 +56,8 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
      * @return 커서 정보 포함된 응답
      */
     @Override
-    public DCDriveListResData fetchDriveListByUserId(Long userId,int pageSize, String startTime, String driveId) {
-        CommonRes<DCDriveListResData> res = dashBoardClient.getDrivesByUserId(userId,pageSize, startTime, driveId);
+    public DCDriveListResData fetchDriveListByUserId(String userId, int pageSize, String startTime, String driveId) {
+        CommonRes<DCDriveListResData> res = dashBoardClient.getDrivesByUserId(userId, pageSize, startTime, driveId);
         if (res == null || res.data == null) {
             log.warn("DashboardClient.getDrivesByUserId(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);

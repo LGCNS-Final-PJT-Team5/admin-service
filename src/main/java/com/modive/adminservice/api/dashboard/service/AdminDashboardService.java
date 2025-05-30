@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface AdminDashboardService {
-    Map<String, TotalCntAndRateItem> getDashboardStatistics(Long userId);
+    Map<String, TotalCntAndRateItem> getDashboardStatistics(String userId);
     List<MonthlyDrivesItem> getMonthlyDrivesStatistics();
     Map<String, Object> getMonthlyUserStatistics();
 }

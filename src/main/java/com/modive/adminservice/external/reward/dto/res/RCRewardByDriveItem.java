@@ -15,6 +15,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RCRewardByDriveItem {
-    private Long driveId;
+    private String driveId;
     private int reward;
 }

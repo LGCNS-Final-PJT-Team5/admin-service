@@ -33,7 +33,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
      * 대시보드 통계 조회
      */
     @Override
-    public Map<String, TotalCntAndRateItem> getDashboardStatistics(Long userId) {
+    public Map<String, TotalCntAndRateItem> getDashboardStatistics(String userId) {
         UCTotalCntAndRateItem userTotalCountAndChangeRate = userFetchService.fetchUserTotalCountAndChangeRate();
         TotalCntAndRateItem totalUsers = TotalCntAndRateItem.builder()
                 .value(userTotalCountAndChangeRate.getValue())

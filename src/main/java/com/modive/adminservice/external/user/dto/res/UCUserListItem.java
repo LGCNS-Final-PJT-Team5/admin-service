@@ -15,7 +15,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UCUserListItem {
-    private Long userId;
+    private String userId;
     private String nickname;
     private String email;
     private int experience;

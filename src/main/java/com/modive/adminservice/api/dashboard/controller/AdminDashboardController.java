@@ -62,7 +62,7 @@ public class AdminDashboardController {
                     content = {@Content(schema = @Schema(implementation = ErrorRes.class))})
     })
     public ResponseEntity<CommonRes> getSummary (
-            @RequestHeader("X-USER-ID") Long userId
+            @RequestHeader("X-USER-ID") String userId
     ) {
         Map<String, TotalCntAndRateItem> dashboardStatistics = adminDashboardService.getDashboardStatistics(userId);
 

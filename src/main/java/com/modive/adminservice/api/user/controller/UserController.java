@@ -89,7 +89,7 @@ public class UserController {
     })
     public ResponseEntity<CommonRes> getUser(
             @Schema(description = "유저 ID", example = "1")
-            @PathVariable("userId") Long userId
+            @PathVariable("userId") String userId
     ) {
         List<UserListItem> userListItem = userAdminService.adminGetUserDetail(userId);
 
@@ -135,7 +135,7 @@ public class UserController {
     })
     public ResponseEntity<CommonRes> deleteUser(
             @Schema(description = "유저 ID", example = "1")
-            @PathVariable("userId") Long userId
+            @PathVariable("userId") String userId
     ) {
         userAdminService.adminInactiveUser(userId);
 
@@ -158,7 +158,7 @@ public class UserController {
     })
     public ResponseEntity<CommonRes> getUserRewards(
             @Schema(description = "유저 ID", example = "1")
-            @PathVariable("userId") Long userId,
+            @PathVariable("userId") String userId,
 
             @Parameter(name = "page", description = "페이지 번호", example = "2", required = true)
             @RequestParam int page,
@@ -189,7 +189,7 @@ public class UserController {
     })
     public ResponseEntity<CommonRes> getUserDrives(
             @Schema(description = "유저 ID", example = "1")
-            @PathVariable("userId") Long userId,
+            @PathVariable("userId") String userId,
 
             @Parameter(name = "pageSize", description = "한 번에 가져올 항목 수", example = "10", required = false)
             @RequestParam (name = "pageSize", required = false) Integer pageSize,

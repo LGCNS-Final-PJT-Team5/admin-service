@@ -24,7 +24,7 @@ public interface DashBoardClient {
      * @return CommonRes 형태로 사용자별 주행 횟수 정보가 담긴 응답 반환
      */
     @PostMapping("/dashboard/drives/by-user")
-    CommonRes<DCDriveCountResData>  getDriveCountByUser(@RequestBody Map<String, List<Long>> body);
+    CommonRes<DCDriveCountResData>  getDriveCountByUser(@RequestBody Map<String, List<String>> body);
 
     /**
      * 사용자 ID를 전달하여, 해당 사용자의 운전 내역 조회.
@@ -34,7 +34,7 @@ public interface DashBoardClient {
      */
     @GetMapping("/dashboard/drives/{userId}")
     CommonRes<DCDriveListResData> getDrivesByUserId(
-            @PathVariable("userId") Long userId,
+            @PathVariable("userId") String userId,
             @RequestParam(name = "pageSize" , required = false) int pageSize,
             @RequestParam(name = "startTime", required = false) String startTime,
             @RequestParam(name = "driveId", required = false) String driveId

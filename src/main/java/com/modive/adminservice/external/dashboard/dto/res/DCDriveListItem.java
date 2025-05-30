@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DCDriveListItem {
-    private Long driveId;
+    private String driveId;
     private String date;
     private int driveDuration;
 }

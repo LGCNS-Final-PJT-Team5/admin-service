@@ -63,7 +63,7 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 사용자 상세 데이터
      */
     @Override
-    public List<UCUserListItem> fetchUserDetail(Long userId) {
+    public List<UCUserListItem> fetchUserDetail(String userId) {
         CommonRes<UCUserListItem> userClientRes = userClient.getUserDetail(userId);
         if (userClientRes == null || userClientRes.data == null) {
             log.warn("UserClient.getUserDetail(userId = {}) - response or data is null", userId);
@@ -96,7 +96,7 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 비활성화 처리 성공 유무
      */
     @Override
-    public void inactiveUser(Long userId) {
+    public void inactiveUser(String userId) {
         CommonRes userClientRes = userClient.deleteUser(userId);
         if (userClientRes == null || userClientRes.data == null) {
             log.warn("UserClient.deactivateUser(userId = {}) - response or data is null", userId);
