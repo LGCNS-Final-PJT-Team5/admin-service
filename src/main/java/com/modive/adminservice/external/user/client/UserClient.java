@@ -38,7 +38,7 @@ public interface UserClient {
      * @return CommonRes 형태의 상세 조회 결과 응답
      */
     @GetMapping("/user/{userId}")
-    CommonRes<UCUserDetailResData> getUserDetail(@PathVariable Long userId);
+    CommonRes<UCUserListItem> getUserDetail(@PathVariable Long userId);
 
     /**
      * 페이지네이션 정보를 기반으로 사용자 필터링 결과 조회
@@ -47,7 +47,7 @@ public interface UserClient {
      * @return CommonRes 형태의 필터링 결과 응답
      */
     @GetMapping("/user/filter")
-    CommonRes<UCUserListResData> getFilteredUser(@SpringQueryMap UserFilterReq params);
+    CommonRes<UCFilterUserResData> getFilteredUser(@SpringQueryMap UserFilterReq params);
 
     /**
      * userId를 기반으로 사용자 비활성화
@@ -65,5 +65,5 @@ public interface UserClient {
     CommonRes<UCTotalDeviceResData> getTotalUserCars();
 
     @GetMapping("/user/monthly-stats")
-    CommonRes<UCUserStatisticsResData> getMonthlyStats();
+    CommonRes<UCUserStatisticsWrapper> getMonthlyStats();
 }

@@ -1,12 +1,10 @@
 package com.modive.adminservice.api.user.controller;
 
-import com.modive.adminservice.api.user.dto.res.UserDriveListRes;
+import com.modive.adminservice.api.user.dto.res.*;
+import com.modive.adminservice.external.user.dto.res.UCFilterUserResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
-import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
-import com.modive.adminservice.api.user.dto.res.UserListItem;
-import com.modive.adminservice.api.user.dto.res.UserRewardItem;
 import com.modive.adminservice.api.user.service.UserAdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -93,7 +91,7 @@ public class UserController {
             @Schema(description = "유저 ID", example = "1")
             @PathVariable("userId") Long userId
     ) {
-        UserListItem userListItem = userAdminService.adminGetUserDetail(userId);
+        List<UserListItem> userListItem = userAdminService.adminGetUserDetail(userId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("userDetail", userListItem);
@@ -115,10 +113,9 @@ public class UserController {
             @Parameter(name = "UserFilterReq", description = "필터링 데이터, 페이지네이션에 필요한 데이터")
             @ModelAttribute UserFilterReq req
     ) {
-        List<UserListItem> userListItems = userAdminService.adminFilterUser(req);
-
+        UCFilterUserResData userListItems = userAdminService.adminFilterUser(req);
         Map<String, Object> data = new HashMap<>();
-        data.put("users", userListItems);
+        data.put("filterResult", userListItems);
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 필터링에 성공하였습니다."),

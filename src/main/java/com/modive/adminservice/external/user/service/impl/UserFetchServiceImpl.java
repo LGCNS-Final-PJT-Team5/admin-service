@@ -63,14 +63,14 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 사용자 상세 데이터
      */
     @Override
-    public UCUserDetailResData fetchUserDetail(Long userId) {
-        CommonRes<UCUserDetailResData> userClientRes = userClient.getUserDetail(userId);
+    public List<UCUserListItem> fetchUserDetail(Long userId) {
+        CommonRes<UCUserListItem> userClientRes = userClient.getUserDetail(userId);
         if (userClientRes == null || userClientRes.data == null) {
             log.warn("UserClient.getUserDetail(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        return userClientRes.data;
+        return List.of(userClientRes.data);
     }
 
     /**
@@ -80,14 +80,13 @@ public class UserFetchServiceImpl implements UserFetchService {
      * @return 필터링 결과
      */
     @Override
-    public List<UCUserListItem> fetchFilteredUser(UserFilterReq params) {
-        CommonRes<UCUserListResData> userClientRes = userClient.getFilteredUser(params);
+    public UCFilterUserResData fetchFilteredUser(UserFilterReq params) {
+        CommonRes<UCFilterUserResData> userClientRes = userClient.getFilteredUser(params);
         if (userClientRes == null || userClientRes.data == null) {
             log.warn("UserClient.getFilteredUser(params) - response or data is null", params);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-
-        return userClientRes.getData().getUserInfos();
+        return userClientRes.getData();
     }
 
     /**
@@ -138,15 +137,17 @@ public class UserFetchServiceImpl implements UserFetchService {
      */
     @Override
     public Map<String, Object> fetchUserStatistics() {
-        CommonRes<UCUserStatisticsResData> res = userClient.getMonthlyStats();
+        CommonRes<UCUserStatisticsWrapper> res = userClient.getMonthlyStats();
         if (res == null || res.data == null) {
             log.warn("UserClient.getMonthlyStats() - response or data is null", res);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
+        UCUserStatisticsResData stats = res.getData().getUserStatistics();
+
         Map<String, Object> datas = new HashMap<>();
-        datas.put("summary", res.getData().getSummary());
-        datas.put("userTrend", res.getData().getUserTrend());
+        datas.put("summary", stats.getSummary());
+        datas.put("userTrend", stats.getUserTrend());
 
         return datas;
     }

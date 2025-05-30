@@ -1,18 +1,16 @@
 package com.modive.adminservice.api.user.service;
 
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
-import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
-import com.modive.adminservice.api.user.dto.res.UserDriveListRes;
-import com.modive.adminservice.api.user.dto.res.UserListItem;
-import com.modive.adminservice.api.user.dto.res.UserRewardItem;
+import com.modive.adminservice.api.user.dto.res.*;
+import com.modive.adminservice.external.user.dto.res.UCFilterUserResData;
 
 import java.util.List;
 
 public interface UserAdminService {
     List<UserListItem> adminGetUserList(int page, int pageSize);
     List<UserListItem> adminSearchUser(String searchKeyword);
-    UserListItem adminGetUserDetail(Long userId);
-    List<UserListItem> adminFilterUser(UserFilterReq req);
+    List<UserListItem>  adminGetUserDetail(Long userId);
+    UCFilterUserResData adminFilterUser(UserFilterReq req);
     void adminInactiveUser(Long userId);
     List<UserRewardItem> adminGetUserReward(Long userId, int page, int pageSize);
     UserDriveListRes adminGetUserDriveList(Long userId, int pageSize, String startTime, String driveId);
