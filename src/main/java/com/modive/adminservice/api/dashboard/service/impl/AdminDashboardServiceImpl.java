@@ -25,15 +25,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AdminDashboardServiceImpl implements AdminDashboardService {
-    private UserFetchService userFetchService;
-    private DashboardFetchService dashboardFetchService;
-    private RewardFetchService rewardFetchService;
+    private final UserFetchService userFetchService;
+    private final DashboardFetchService dashboardFetchService;
+    private final RewardFetchService rewardFetchService;
 
     /**
      * 대시보드 통계 조회
      */
     @Override
-    public Map<String, TotalCntAndRateItem> getDashboardStatistics() {
+    public Map<String, TotalCntAndRateItem> getDashboardStatistics(Long userId) {
         UCTotalCntAndRateItem userTotalCountAndChangeRate = userFetchService.fetchUserTotalCountAndChangeRate();
         TotalCntAndRateItem totalUsers = TotalCntAndRateItem.builder()
                 .value(userTotalCountAndChangeRate.getValue())
@@ -52,7 +52,7 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
                 .changeRate(driveTotalCountAndChangeRate.getChangeRate())
                 .build();
 
-        RCRewardTotalCntAndRateItem rewardTotalCntAndRateItem = rewardFetchService.fetchTotalIssuedRewards();
+        RCRewardTotalCntAndRateItem rewardTotalCntAndRateItem = rewardFetchService.fetchTotalIssuedRewards(userId);
         TotalCntAndRateItem totalIssuedRewards = TotalCntAndRateItem.builder()
                 .value(rewardTotalCntAndRateItem.getValue())
                 .changeRate(rewardTotalCntAndRateItem.getChangeRate())

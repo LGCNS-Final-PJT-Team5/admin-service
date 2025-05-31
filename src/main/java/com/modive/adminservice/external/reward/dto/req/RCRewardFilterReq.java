@@ -17,6 +17,7 @@ public class RCRewardFilterReq {
     private Long userId;
     private String reason;
     private String date;
+    private String email;
 
     @NotNull
     private Integer page;

@@ -1,6 +1,9 @@
 package com.modive.adminservice.external.dashboard.client;
 
+import com.modive.adminservice.external.dashboard.dto.res.DCDriveCountResData;
 import com.modive.adminservice.external.dashboard.dto.res.DCDriveListResData;
+import com.modive.adminservice.external.dashboard.dto.res.DCMontlyDriveResData;
+import com.modive.adminservice.external.dashboard.dto.res.DCTotalDriveResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Lazy;
@@ -12,9 +15,7 @@ import java.util.Map;
 /**
  * dashboard-service와 통신하는 Feign Client.
  */
-
-@Lazy
-@FeignClient(name="dashboard-service")
+@FeignClient(name = "dashboard-service")
 public interface DashBoardClient {
 
     /**
@@ -24,7 +25,7 @@ public interface DashBoardClient {
      * @return CommonRes 형태로 사용자별 주행 횟수 정보가 담긴 응답 반환
      */
     @PostMapping("/dashboard/drives/by-user")
-    CommonRes getDriveCountByUser(@RequestBody Map<String, List<Long>> body);
+    CommonRes<DCDriveCountResData>  getDriveCountByUser(@RequestBody Map<String, List<Long>> body);
 
     /**
      * 사용자 ID를 전달하여, 해당 사용자의 운전 내역 조회.
@@ -35,13 +36,14 @@ public interface DashBoardClient {
     @GetMapping("/dashboard/drives/{userId}")
     CommonRes<DCDriveListResData> getDrivesByUserId(
             @PathVariable("userId") Long userId,
-            @RequestParam(name = "pageSize") int pageSize,
+            @RequestParam(name = "pageSize" , required = false) int pageSize,
             @RequestParam(name = "startTime", required = false) String startTime,
             @RequestParam(name = "driveId", required = false) String driveId
     );
     @GetMapping("/dashboard/drives/total")
-    CommonRes getTotalDriveCount();
+    CommonRes<DCTotalDriveResData> getTotalDriveCount();
 
     @GetMapping("/dashboard/drives/monthly-stats")
-    CommonRes getMonthlyStats();
+    CommonRes<DCMontlyDriveResData> getMonthlyStats();
 }
+

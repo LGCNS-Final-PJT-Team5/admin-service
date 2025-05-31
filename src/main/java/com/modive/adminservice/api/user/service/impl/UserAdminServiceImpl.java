@@ -12,8 +12,10 @@ import com.modive.adminservice.external.reward.client.RewardClient;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
 import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.external.reward.dto.res.RCRewardFilterItem;
-import com.modive.adminservice.external.user.dto.res.UCUserDetailResData;
+import com.modive.adminservice.external.user.dto.res.UCFilterUserResData;
 import com.modive.adminservice.external.user.dto.res.UCUserListItem;
+import com.modive.adminservice.global.error.code.ErrorCode;
+import com.modive.adminservice.global.error.exception.RestApiException;
 import com.modive.adminservice.global.util.DateUtils;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import com.modive.adminservice.external.dashboard.service.DashboardFetchService;
@@ -117,30 +119,14 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @return 사용자 상세 데이터
      */
     @Override
-    public UserListItem adminGetUserDetail(Long userId) {
-        UCUserDetailResData user = userFetchService.fetchUserDetail(userId);
-        List<Long> userIds = new ArrayList<>();
-        userIds.add(userId);
+    public List<UserListItem> adminGetUserDetail(Long userId) {
+        List<UCUserListItem> users = userFetchService.fetchUserDetail(userId);
+        List<Long> userIds = users.stream()
+                .map(UCUserListItem::getUserId)
+                .collect(Collectors.toList());
 
         Map<Long, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
-
-        /**
-         * TODO
-         * 유저 서비스에서 특정 사용자 조회 시 응답 값으로
-         * `joinedAt`, `seedBalance`, `isActive` 값 추가 필요
-         * (UCUserDetailResData DTO 참고)
-         */
-        UserListItem userListItem = UserListItem.builder()
-                .userId(userId)
-                .nickname(user.getNickname())
-                .email(user.getEmail())
-                .experience(DateUtils.getYearsSince(
-                        LocalDate.parse(user.getLicenseDate(), DateTimeFormatter.ISO_LOCAL_DATE_TIME).atStartOfDay())
-                )
-                .driveCount(driveCountMap.get(userId))
-                .build();
-
-        return userListItem;
+        return mergeUserData(users, driveCountMap);
     }
 
     /**
@@ -150,15 +136,9 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @return 필터링 결과
      */
     @Override
-    public List<UserListItem> adminFilterUser(UserFilterReq req) {
-        List<UCUserListItem> users = userFetchService.fetchFilteredUser(req);
-        List<Long> userIds = users.stream()
-                .map(UCUserListItem::getUserId)
-                .collect(Collectors.toList());
-
-        Map<Long, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
-
-        return mergeUserData(users, driveCountMap);
+    public UCFilterUserResData adminFilterUser(UserFilterReq req) {
+        UCFilterUserResData filteredItem = userFetchService.fetchFilteredUser(req);
+        return filteredItem;
     }
 
     /**
@@ -187,7 +167,7 @@ public class UserAdminServiceImpl implements UserAdminService {
                 .pageSize(pageSize)
                 .build();
 
-        List<RCRewardFilterItem> rewards = rewardFetchService.fetchRewardFilter(req);
+        List<RCRewardFilterItem> rewards = rewardFetchService.fetchRewardFilter(userId, req);
 
         List<UserRewardItem> userRewardItems = new ArrayList<>();
         for (RCRewardFilterItem item : rewards) {
@@ -258,18 +238,37 @@ public class UserAdminServiceImpl implements UserAdminService {
     @Override
     public UserDriveListRes adminGetUserDriveList(Long userId, int pageSize, String startTime, String driveId ) {
         DCDriveListResData dashboardRes = dashboardFetchService.fetchDriveListByUserId(userId, pageSize, startTime, driveId);
-        List<DCDriveListItem> drives = dashboardRes.getDriveHistory();
+        List<DCDriveListItem> drives = dashboardRes.getDriveHistory().getList();
 
         List<Long> driveIds = extractDriveIds(drives);
-        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(new RCRewardByDriveReq(driveIds));
+
+        if (driveIds.isEmpty()) {
+            return new UserDriveListRes();
+        }
+
+        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(userId, new RCRewardByDriveReq(driveIds));
         Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
-        List<UserDriveListItem> enriched = enrichDriveItems(drives, rewardMap,events);
+//        // 테스트용 Mock: 리워드 맵을 빈 값 또는 더미 값으로 대체
+//        Map<Long, Integer> rewardMap = new HashMap<>();
+//        for (Long driveIdItem : driveIds) {
+//            rewardMap.put(driveIdItem, 1); // 또는 임의의 값 (예: 10)
+//        }
+//
+//        // 테스트용 Mock: 이벤트 맵도 빈 값 또는 더미 이벤트로 대체
+//        Map<Long, List<EventsByDriveDTO>> events = new HashMap<>();
+//        for (Long driveIdItem : driveIds) {
+//            events.put(driveIdItem, List.of(
+//                    new EventsByDriveDTO("SPEEDING", 1L),
+//                    new EventsByDriveDTO("HARSH_BRAKING", 2L)
+//            ));
+//        }
+        List<UserDriveListItem> enriched = enrichDriveItems(drives, rewardMap, events);
 
         return UserDriveListRes.builder()
                 .driveHistory(enriched)
-                .startTime(dashboardRes.getStartTime())
-                .driveId(dashboardRes.getDriveId())
+                .startTime(dashboardRes.getDriveHistory().getStartTime())
+                .driveId(dashboardRes.getDriveHistory().getDriveId())
                 .build();
     }
 }

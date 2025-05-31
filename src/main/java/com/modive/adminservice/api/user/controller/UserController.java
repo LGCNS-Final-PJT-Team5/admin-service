@@ -1,12 +1,10 @@
 package com.modive.adminservice.api.user.controller;
 
-import com.modive.adminservice.api.user.dto.res.UserDriveListRes;
+import com.modive.adminservice.api.user.dto.res.*;
+import com.modive.adminservice.external.user.dto.res.UCFilterUserResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.global.error.dto.ErrorRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
-import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
-import com.modive.adminservice.api.user.dto.res.UserListItem;
-import com.modive.adminservice.api.user.dto.res.UserRewardItem;
 import com.modive.adminservice.api.user.service.UserAdminService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -93,7 +91,7 @@ public class UserController {
             @Schema(description = "유저 ID", example = "1")
             @PathVariable("userId") Long userId
     ) {
-        UserListItem userListItem = userAdminService.adminGetUserDetail(userId);
+        List<UserListItem> userListItem = userAdminService.adminGetUserDetail(userId);
 
         Map<String, Object> data = new HashMap<>();
         data.put("userDetail", userListItem);
@@ -115,10 +113,9 @@ public class UserController {
             @Parameter(name = "UserFilterReq", description = "필터링 데이터, 페이지네이션에 필요한 데이터")
             @ModelAttribute UserFilterReq req
     ) {
-        List<UserListItem> userListItems = userAdminService.adminFilterUser(req);
-
+        UCFilterUserResData userListItems = userAdminService.adminFilterUser(req);
         Map<String, Object> data = new HashMap<>();
-        data.put("users", userListItems);
+        data.put("filterResult", userListItems);
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 필터링에 성공하였습니다."),
@@ -126,7 +123,7 @@ public class UserController {
         );
     }
 
-    @DeleteMapping("/{userId}")
+    @PostMapping("/{userId}/delete")
     @Operation(summary = "사용자 비활성화", description = "userId로 사용자를 비활성화합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Success",
@@ -195,7 +192,7 @@ public class UserController {
             @PathVariable("userId") Long userId,
 
             @Parameter(name = "pageSize", description = "한 번에 가져올 항목 수", example = "10", required = false)
-            @RequestParam int pageSize,
+            @RequestParam (name = "pageSize", required = false) Integer pageSize,
 
             @Parameter(name = "startTime", description = "커서: 마지막 항목의 startTime (최신순)", example = "2024-05-20T12:34:56Z", required = false)
             @RequestParam(name = "startTime", required = false) String startTime,
@@ -209,6 +206,8 @@ public class UserController {
         data.put("driveHistory", result.getDriveHistory());
         data.put("startTime", result.getStartTime());
         data.put("driveId", result.getDriveId());
+
+        System.out.println(data);
 
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 운전 내역 조회에 성공하였습니다."),

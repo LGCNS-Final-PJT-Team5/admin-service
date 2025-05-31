@@ -1,5 +1,6 @@
 package com.modive.adminservice.external.dashboard.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modive.adminservice.external.dashboard.client.DashBoardClient;
 import com.modive.adminservice.external.dashboard.dto.res.*;
 import com.modive.adminservice.global.dto.res.CommonRes;
@@ -36,13 +37,12 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
             log.warn("DashboardClient.getDriveCountByUser - response or data is null");
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
+         Map<Long, Integer> driveCountMap = new HashMap<>();
+         for (DCDriveCountItem driveCount : dashboardClientRes.data.getDriveCountByUser()) {
+             driveCountMap.put(driveCount.getUserId(), driveCount.getDriveCount());
+         }
 
-        Map<Long, Integer> driveCountMap = new HashMap<>();
-        for (DCDriveCountItem driveCount : dashboardClientRes.data.getDriveCountByUser()) {
-            driveCountMap.put(driveCount.getUserId(), driveCount.getDriveCount());
-        }
-
-        return driveCountMap;
+         return driveCountMap;
      }
 
     /**
@@ -62,7 +62,9 @@ public class DashboardFetchServiceImpl implements DashboardFetchService {
             log.warn("DashboardClient.getDrivesByUserId(userId = {}) - response or data is null", userId);
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
-        return res.getData();    }
+        log.info("Dashboard Response: {}", res.data);
+        return res.data;
+    }
 
     /**
      *  대시보드 서비스에서 누적 주행 횟수와 증감률 조회
