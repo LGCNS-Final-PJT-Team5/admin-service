@@ -15,7 +15,8 @@ import java.util.Map;
 /**
  * dashboard-service와 통신하는 Feign Client.
  */
-@FeignClient(name = "dashboard-service")
+@FeignClient(name="dashboard-service",
+        url="${service.dashboard-service.url}")
 public interface DashBoardClient {
 
     /**

@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
  */
 
 @Lazy
-@FeignClient(name="user-service")
+@FeignClient(name="user-service",
+        url="${service.user-service.url}")
 public interface UserClient {
     /**
      * 페이지네이션 정보를 기반으로 사용자 목록 조회

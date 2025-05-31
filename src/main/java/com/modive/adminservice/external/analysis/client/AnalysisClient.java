@@ -21,7 +21,8 @@ import java.util.Map;
  */
 
 @Lazy
-@FeignClient(name="analysis-service")
+@FeignClient(name="analysis-service",
+        url="${service.analysis-service.url}")
 public interface AnalysisClient {
 
     /**

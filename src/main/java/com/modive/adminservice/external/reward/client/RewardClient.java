@@ -22,7 +22,8 @@ import java.time.LocalDate;
  */
 
 @Lazy
-@FeignClient(name="reward-service")
+@FeignClient(name="reward-service",
+        url= "${service.reward-service.url}")
 public interface RewardClient {
 
     //REWARD FOR USER REQUEST

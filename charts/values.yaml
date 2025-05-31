@@ -25,3 +25,12 @@ config:
     name: admin-service
   swagger:
     enabled: true
+  service:
+    analysis:
+      url: http://analysis-service.analysis-service.svc.cluster.local:80
+    dashboard:
+      url: http://dashboard-service.dashboard-service.svc.cluster.local:80
+    reward:
+      url: http://reward-service.reward-service.svc.cluster.local:80
+    user:
+      url: http://user-service.user-service.svc.cluster.local:80
