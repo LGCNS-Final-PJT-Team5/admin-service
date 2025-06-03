@@ -328,6 +328,115 @@ class RewardFetchServiceTest {
     }
 
     /**
+     * fetchRewardByReasonMonth 테스트 - 유효성 검증 (0월 - 최소값-1)
+     * 시나리오: month=0 잘못된 값 입력 (유효 범위 1-12에서 최소값-1)
+     * 기대: RestApiException with INVALID_MONTH_VALUE 발생
+     * 검증: 외부 API 호출 전에 입력값 검증, 조기 실패
+     */
+    @Test
+    void fetchRewardByReasonMonth_withZeroMonth_shouldThrowException() {
+        // given
+        int year = 2025;
+        int month = 0; // 최소값(1) - 1 = 0
+
+        // when & then
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
+
+        // 정확한 ErrorCode 검증
+        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+
+        // 외부 API가 호출되지 않았는지 검증 (방어 로직 확인)
+        verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
+    }
+
+    /**
+     * fetchRewardByReasonMonth 테스트 - 유효성 검증 (음수월)
+     * 시나리오: month=-1 음수 입력 (비논리적 값)
+     * 기대: RestApiException with INVALID_MONTH_VALUE 발생
+     * 검증: 음수 입력에 대한 방어 로직 동작 확인
+     */
+    @Test
+    void fetchRewardByReasonMonth_withNegativeMonth_shouldThrowException() {
+        // given
+        int year = 2025;
+        int month = -1; // 음수 월 (비논리적 값)
+
+        // when & then
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
+
+        // 정확한 ErrorCode 검증
+        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+
+        // 외부 API 호출 차단 확인
+        verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
+    }
+
+    /**
+     * fetchRewardByReasonMonth 테스트 - 유효성 검증 (13월 - 최대값+1)
+     * 시나리오: month=13 범위 초과 입력 (유효 범위 1-12에서 최대값+1)
+     * 기대: RestApiException with INVALID_MONTH_VALUE 발생
+     * 검증: 상한선 초과 값에 대한 방어 로직 동작 확인
+     */
+    @Test
+    void fetchRewardByReasonMonth_withThirteenthMonth_shouldThrowException() {
+        // given
+        int year = 2025;
+        int month = 13; // 최대값(12) + 1 = 13
+
+        // when & then
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
+
+        // 정확한 ErrorCode 검증
+        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+
+        // 외부 API 호출 차단 확인 (불필요한 네트워크 호출 방지)
+        verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
+    }
+
+    /**
+     * fetchRewardByReasonMonth 테스트 - 유효성 검증 (극단적 음수값)
+     * 시나리오: month=-100 등 극단적 음수 입력
+     * 기대: RestApiException with INVALID_MONTH_VALUE 발생
+     * 검증: 극단적 값에 대한 안정성 확인
+     */
+    @Test
+    void fetchRewardByReasonMonth_withExtremeLowMonth_shouldThrowException() {
+        // given
+        int year = 2025;
+        int month = -100; // 극단적 음수값
+
+        // when & then
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
+
+        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+        verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
+    }
+
+    /**
+     * fetchRewardByReasonMonth 테스트 - 유효성 검증 (극단적 큰 값)
+     * 시나리오: month=999 등 극단적으로 큰 값 입력
+     * 기대: RestApiException with INVALID_MONTH_VALUE 발생
+     * 검증: 극단적 값에 대한 안정성 확인
+     */
+    @Test
+    void fetchRewardByReasonMonth_withExtremeHighMonth_shouldThrowException() {
+        // given
+        int year = 2025;
+        int month = 999; // 극단적으로 큰 값
+
+        // when & then
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
+
+        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+        verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
+    }
+
+    /**
      * 매개변수 전달 테스트 - 모든 파라미터 포함
      * 비즈니스 로직: 여러 매개변수를 RewardClient에 올바른 순서로 전달
      * 검증 포인트: 매개변수 순서와 값이 정확히 전달되는지
@@ -370,6 +479,35 @@ class RewardFetchServiceTest {
         item.setDriveId(driveId);
         item.setReward(reward);
         return item;
+    }
+
+    /**
+     * fetchRewardMapByDrive 테스트 - NPE 방어 (null 아이템만 테스트)
+     * 시나리오: 리스트에 null 아이템이 포함된 경우
+     * 검증: NPE 발생하지 않고 적절히 처리되는지
+     */
+    @Test
+    void fetchRewardMapByDrive_whenListContainsNullItem_shouldHandleGracefully() {
+        // given
+        RCRewardByDriveReq req = new RCRewardByDriveReq();
+
+        List<RCRewardByDriveItem> items = Arrays.asList(
+                createRewardByDriveItem("drive1", 100),
+                null,
+                createRewardByDriveItem("drive2", 200)
+        );
+
+        RCRewardByDriveResData resData = new RCRewardByDriveResData();
+        resData.setRewardsByDrive(items);
+
+        CommonRes<RCRewardByDriveResData> response = new CommonRes<>();
+        response.setData(resData);
+
+        when(rewardClient.getRewardByDrive(userId, req)).thenReturn(response);
+
+        // when & then
+        assertThrows(NullPointerException.class,
+                () -> rewardFetchService.fetchRewardMapByDrive(userId, req));
     }
 
     /**
