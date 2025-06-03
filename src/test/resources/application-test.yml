@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    config:
+      enabled: false
+    discovery:
+      enabled: false  # Spring Cloud Commons 기반 비활성화
+  config:
+    import: ""
+
+eureka:
+  client:
+    enabled: false    # Eureka Client 비활성화
+    register-with-eureka: false
+    fetch-registry: false

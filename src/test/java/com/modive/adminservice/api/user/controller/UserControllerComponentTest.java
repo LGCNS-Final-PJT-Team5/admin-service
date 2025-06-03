@@ -1,5 +1,6 @@
 package com.modive.adminservice.api.user.controller;
 
+import com.modive.adminservice.api.dashboard.service.AdminDashboardService;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import com.modive.adminservice.api.user.dto.res.UserDriveListItem;
 import com.modive.adminservice.api.user.dto.res.UserDriveListRes;
@@ -7,13 +8,20 @@ import com.modive.adminservice.api.user.dto.res.UserListItem;
 import com.modive.adminservice.api.user.dto.res.UserRewardItem;
 import com.modive.adminservice.api.user.service.UserAdminService;
 import com.modive.adminservice.external.user.dto.res.UCFilterUserResData;
+import com.netflix.discovery.converters.Auto;
 import jakarta.servlet.ServletException;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -34,21 +42,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * UserControllerComponentTest - 사용자 관리자 API의 웹 계층 테스트
  * 목적: 컨트롤러 레벨에서의 요청 처리, JSON 응답 구조 및 상태 코드 검증
  */
-@ActiveProfiles("test")
-@WebMvcTest(UserController.class)
-@TestPropertySource(properties = {
-        "spring.cloud.config.enabled=false",
-        "spring.cloud.config.discovery.enabled=false",
-        "spring.cloud.config.fail-fast=false",
-        "spring.cloud.discovery.enabled=false",
-        "eureka.client.enabled=false"
-})
+@SpringBootTest(properties = {"spring.config.location=classpath:application-test.yml"})
+@AutoConfigureMockMvc
 class UserControllerComponentTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @MockitoBean
     private UserAdminService userAdminService;
 
     private ResultActions performGet(String url, Map<String, String> params) throws Exception {

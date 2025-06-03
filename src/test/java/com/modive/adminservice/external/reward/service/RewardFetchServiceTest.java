@@ -1,8 +1,7 @@
-package com.modive.adminservice.unit;
+package com.modive.adminservice.external.reward.service;
 
 import com.modive.adminservice.api.reward.dto.*;
 import com.modive.adminservice.external.reward.client.RewardClient;
-import com.modive.adminservice.external.reward.service.RewardFetchService;
 import com.modive.adminservice.external.reward.dto.req.RCRewardByDriveReq;
 import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.external.reward.dto.res.*;
@@ -464,6 +463,75 @@ class RewardFetchServiceTest {
         // then
         assertEquals(expectedDto, result);
         verify(rewardClient).fetchRewardFilter(userId, email, description, startDate, endDate, page, size);
+    }
+
+    /**
+     * fetchRewardHistory 테스트 - 정상 응답
+     * 시나리오: RewardClient가 유효한 RewardHistoryDto 반환
+     * 기대: 결과가 응답 객체와 동일함
+     */
+    @Test
+    void fetchRewardHistory_whenValidResponse_shouldReturnHistory() {
+        // given
+        int page = 1;
+        int size = 10;
+
+        RewardHistoryDto expectedDto = new RewardHistoryDto();
+        CommonRes<RewardHistoryDto> response = createCommonRes(expectedDto);
+
+        when(rewardClient.fetchRewardHistory(userId, page, size))
+                .thenReturn(response);
+
+        // when
+        RewardHistoryDto result = rewardFetchService.fetchRewardHistory(userId, page, size);
+
+        // then
+        assertEquals(expectedDto, result);
+        verify(rewardClient).fetchRewardHistory(userId, page, size);
+    }
+
+    /**
+     * fetchRewardMonth 테스트 - 정상 응답
+     * 시나리오: RewardClient가 유효한 RewardMonthDto 반환
+     * 기대: 결과가 응답 객체와 동일함
+     */
+    @Test
+    void fetchRewardMonth_whenValidResponse_shouldReturnMonthReward() {
+        // given
+        RewardMonthDto expectedDto = new RewardMonthDto();
+        CommonRes<RewardMonthDto> response = createCommonRes(expectedDto);
+
+        when(rewardClient.fetchRewardMonth(userId))
+                .thenReturn(response);
+
+        // when
+        RewardMonthDto result = rewardFetchService.fetchRewardMonth(userId);
+
+        // then
+        assertEquals(expectedDto, result);
+        verify(rewardClient).fetchRewardMonth(userId);
+    }
+
+    /**
+     * fetchRewardByReasonTotal 테스트 - 정상 응답
+     * 시나리오: RewardClient가 유효한 RewardByReasonTotalDto 반환
+     * 기대: 결과가 응답 객체와 동일함
+     */
+    @Test
+    void fetchRewardByReasonTotal_whenValidResponse_shouldReturnData() {
+        // given
+        RewardByReasonTotalDto expectedDto = new RewardByReasonTotalDto();
+        CommonRes<RewardByReasonTotalDto> response = createCommonRes(expectedDto);
+
+        when(rewardClient.fetchRewardByReasonTotal(userId))
+                .thenReturn(response);
+
+        // when
+        RewardByReasonTotalDto result = rewardFetchService.fetchRewardByReasonTotal(userId);
+
+        // then
+        assertEquals(expectedDto, result);
+        verify(rewardClient).fetchRewardByReasonTotal(userId);
     }
 
     // ========== Helper Methods ==========
