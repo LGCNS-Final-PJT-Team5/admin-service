@@ -41,6 +41,8 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 dependencyManagement {
@@ -68,6 +70,8 @@ jacocoTestReport {
                     '**/dto/**',
                     '**/config/**',
                     '**/exception/**',
+                    '**/error/**',
+                    '**/client/**',
                     '**/AdminServiceApplication.*'
             ])
         }))
