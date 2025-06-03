@@ -3,12 +3,14 @@ package com.modive.adminservice.api.dashboard.controller;
 import com.modive.adminservice.api.dashboard.dto.res.MonthlyDrivesItem;
 import com.modive.adminservice.api.dashboard.service.AdminDashboardService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.TestPropertySource;
+import org.springframework.boot.test.context.TestConfiguration;
+//import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.http.MediaType;
@@ -27,22 +29,23 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+@SpringBootTest(properties = {"spring.config.location=classpath:application-test.yml"})
 @AutoConfigureMockMvc
-@ActiveProfiles("test")
-@TestPropertySource(properties = {
-        "eureka.client.enabled=false",
-        "eureka.client.register-with-eureka=false",
-        "eureka.client.fetch-registry=false"
-})
 public class AdminDashboardComponentTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private AdminDashboardService adminDashboardService;
+//    @TestConfiguration
+//    static class MockServiceConfig {
+//        @Bean
+//        public AdminDashboardService adminDashboardService() {
+//            return Mockito.mock(AdminDashboardService.class);
+//        }
+//    }
 
+    @MockitoBean
+    private AdminDashboardService adminDashboardService;
 
     private ResultActions performGet(String url) throws Exception {
         return mockMvc.perform(get(url)
