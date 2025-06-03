@@ -37,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 })
 public class AdminDashboardComponentTest {
 
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -50,6 +49,11 @@ public class AdminDashboardComponentTest {
                 .contentType(MediaType.APPLICATION_JSON));
     }
 
+    /**
+     * getMonthlyUsersStatistics API 테스트 - 사용자 증감 통계 정상 응답
+     * 시나리오: totalUsers와 monthlyGrowth 데이터가 포함된 정상 응답을 반환하는 경우
+     * 기대: status 200, message 응답 확인, JSON 필드 구조 및 값 검증
+     */
     @Test
     void getMonthlyUsersStatistics_Success() throws Exception {
         // Given
@@ -75,6 +79,11 @@ public class AdminDashboardComponentTest {
                 .andExpect(jsonPath("$.data.userStatistics.monthlyGrowth[0].count").value(100));
     }
 
+    /**
+     * getMonthlyDrivesStatistics API 테스트 - 운전 통계 정상 응답
+     * 시나리오: 월별 운전 횟수 데이터를 포함하는 리스트가 정상적으로 반환되는 경우
+     * 기대: status 200, message 응답 확인, 각 연/월/주행수 값 검증
+     */
     @Test
     void getMonthlyDrivesStatistics_Success() throws Exception {
         // Given
@@ -99,6 +108,12 @@ public class AdminDashboardComponentTest {
                 .andExpect(jsonPath("$.data.monthlyDrivesStatistics[1].count").value(200));
     }
 
+
+    /**
+     * getMonthlyDrivesStatistics API 테스트 - 내부 서버 오류 시 예외 처리
+     * 시나리오: adminDashboardService 내부에서 RuntimeException 발생
+     * 기대: ServletException으로 wrapping 되어 전달되고, 원인 메시지 검증 가능
+     */
     @Test
     void getMonthlyDrivesStatistics_InternalServerError() throws Exception {
         // Given

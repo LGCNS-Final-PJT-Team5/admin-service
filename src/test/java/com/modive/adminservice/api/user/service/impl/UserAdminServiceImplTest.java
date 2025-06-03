@@ -28,6 +28,27 @@ import static org.mockito.Mockito.*;
 
 class UserAdminServiceImplTest {
 
+    @Mock
+    private UserFetchService userFetchService;
+    @Mock
+    private DashboardFetchService dashboardFetchService;
+    @Mock
+    private AnalysisFetchService analysisFetchService;
+    @Mock
+    private RewardFetchService rewardFetchService;
+    @InjectMocks
+    private UserAdminServiceImpl userAdminServiceImpl;
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+
+    /**
+     * adminSearchUser 테스트
+     * 시나리오: 검색 키워드에 해당하는 사용자가 없는 경우
+     * 기대: 빈 리스트 반환, 관련 서비스 메소드 정상 호출 확인
+     */
     @Test
     void testAdminSearchUser_emptyResult() {
         String searchKeyword = "unmatched";
@@ -41,6 +62,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(eq(Collections.emptyList()));
     }
 
+    /**
+     * adminSearchUser 테스트 - 정상 사용자 검색
+     * 시나리오: 검색 키워드에 해당하는 사용자가 존재하는 경우
+     * 기대: 사용자 정보가 변환되어 반환되고, 각 필드가 올바르게 매핑되는지 검증
+     */
     @Test
     void testAdminSearchUser_successfullyFindUsers() {
         String searchKeyword = "test";
@@ -78,6 +104,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(Collections.singletonList("user1"));
     }
 
+    /**
+     * adminFilterUser 테스트 - 필터 조건 만족 사용자 조회
+     * 시나리오: 필터 조건으로 사용자 조회 성공
+     * 기대: 반환된 데이터가 요청과 일치하며 내부 서비스 호출 정상 수행됨
+     */
     @Test
     void testAdminFilterUser_successfulFiltering() {
         UserFilterReq filterReq = new UserFilterReq();
@@ -98,6 +129,11 @@ class UserAdminServiceImplTest {
         verify(userFetchService, times(1)).fetchFilteredUser(filterReq);
     }
 
+    /**
+     * adminFilterUser 테스트 - userFetchService 예외 발생
+     * 시나리오: 내부 서비스에서 RuntimeException 발생
+     * 기대: 예외가 호출자에게 전파되고, 호출 횟수 검증
+     */
     @Test
     void testAdminFilterUser_userFetchServiceException() {
         UserFilterReq filterReq = new UserFilterReq();
@@ -118,6 +154,11 @@ class UserAdminServiceImplTest {
         verify(userFetchService, times(1)).fetchFilteredUser(filterReq);
     }
 
+    /**
+     * adminSearchUser 테스트 - dashboardFetchService 예외 발생
+     * 시나리오: user는 조회되었지만 dashboard 서비스 실패
+     * 기대: 예외가 전파되고 호출 순서 검증
+     */
     @Test
     void testAdminSearchUser_dashboardFetchServiceException() {
         String searchKeyword = "test";
@@ -145,6 +186,12 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(Collections.singletonList("user1"));
     }
 
+
+    /**
+     * adminSearchUser 테스트 - userFetchService 예외 발생
+     * 시나리오: 사용자 조회 자체에 실패한 경우
+     * 기대: 예외 발생, 후속 호출이 생략됨
+     */
     @Test
     void testAdminSearchUser_userFetchServiceException() {
         String searchKeyword = "test";
@@ -159,12 +206,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, never()).fetchDriveCountMap(anyList());
     }
 
-    @Mock
-    private UserFetchService userFetchService;
-
-    @Mock
-    private DashboardFetchService dashboardFetchService;
-
+    /**
+     * adminInactiveUser 테스트 - 정상 처리
+     * 시나리오: 사용자 비활성화가 성공적으로 처리됨
+     * 기대: 서비스 호출 확인, 예외 없음
+     */
     @Test
     void testAdminInactiveUser_successfulInactivation() {
         String userId = "user1";
@@ -176,6 +222,11 @@ class UserAdminServiceImplTest {
         verify(userFetchService, times(1)).inactiveUser(userId);
     }
 
+    /**
+     * adminInactiveUser 테스트 - 예외 처리
+     * 시나리오: 사용자 비활성화 중 서비스 예외 발생
+     * 기대: 예외 전파 및 호출 여부 검증
+     */
     @Test
     void testAdminInactiveUser_serviceException() {
         String userId = "user1";
@@ -189,20 +240,10 @@ class UserAdminServiceImplTest {
         verify(userFetchService, times(1)).inactiveUser(userId);
     }
 
-    @InjectMocks
-    private UserAdminServiceImpl userAdminServiceImpl;
-
-    @Mock
-    private AnalysisFetchService analysisFetchService;
-
-    @Mock
-    private RewardFetchService rewardFetchService;
-
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
-
+    /**
+     * adminGetUserList 테스트 - 사용자 리스트가 비어 있는 경우
+     * 기대: 빈 결과 반환 및 호출 정상 수행 확인
+     */
     @Test
     void testAdminGetUserList_emptyUsers() {
         int page = 1, pageSize = 10;
@@ -216,6 +257,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(eq(Collections.emptyList()));
     }
 
+    /**
+     * adminGetUserList 테스트 - driveCount 정보가 0인 경우
+     * 시나리오: 사용자 정보는 존재하나 주행 수가 0으로 조회됨
+     * 기대: 각 필드 값 매핑 검증
+     */
     @Test
     void testAdminGetUserList_emptyDriveCountMap() {
         int page = 1, pageSize = 10;
@@ -248,7 +294,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(Collections.singletonList("user1"));
     }
 
-
+    /**
+     * adminGetUserList 테스트 - 사용자 조회 실패
+     * 시나리오: userFetchService 호출 중 예외 발생
+     * 기대: 예외 전파 및 후속 호출 생략
+     */
     @Test
     void testAdminGetUserList_userFetchServiceException() {
         int page = 1, pageSize = 10;
@@ -262,6 +312,10 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, never()).fetchDriveCountMap(anyList());
     }
 
+    /**
+     * adminGetUserList 테스트 - dashboardFetchService 실패
+     * 기대: 예외 발생 및 호출 순서 검증
+     */
     @Test
     void testAdminGetUserList_dashboardFetchServiceException() {
         int page = 1, pageSize = 10;
@@ -288,6 +342,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(Collections.singletonList("user1"));
     }
 
+    /**
+     * adminGetUserList 테스트 - 정상적인 사용자 리스트 반환
+     * 시나리오: 사용자 2명 정보가 정확히 매핑되어 반환됨
+     * 기대: 각 사용자 정보가 정확하게 포함되어 있는지 검증
+     */
     @Test
     void testAdminGetUserList() {
         int page = 1;
@@ -347,6 +406,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(Arrays.asList("user1", "user2"));
     }
 
+    /**
+     * adminGetUserList 테스트 - 사용자 목록이 null 반환
+     * 시나리오: 외부 서비스에서 null 반환
+     * 기대: NPE 발생 및 메시지 검증
+     */
     @Test
     void testAdminGetUserList_userFetchServiceReturnsNull() {
         int page = 1;
@@ -362,6 +426,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, never()).fetchDriveCountMap(anyList());
     }
 
+    /**
+     * adminGetUserList 테스트 - driveCountMap이 null 반환
+     * 시나리오: 사용자 목록은 있으나 주행 수 정보 없음
+     * 기대: NPE 발생 및 메시지 검증
+     */
     @Test
     void testAdminGetUserList_dashboardFetchServiceReturnsNull() {
         int page = 1;
@@ -379,6 +448,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(anyList());
     }
 
+    /**
+     * adminGetUserList 테스트 - 특정 사용자에 대한 driveCount 누락
+     * 시나리오: driveCountMap에 일부 사용자 정보가 없음
+     * 기대: NPE 발생 및 로그 또는 대응 검토 필요
+     */
     @Test
     void testAdminGetUserList_logsWarningForMissingDriveCount() {
         int page = 1;
@@ -402,7 +476,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(List.of("user1"));
     }
 
-
+    /**
+     * adminGetUserList 테스트 - 일부 사용자에 대한 driveCount 누락
+     * 시나리오: dashboardFetchService가 일부 사용자에 대해 주행 수를 반환하지 않음
+     * 기대: NPE 발생 및 누락된 데이터에 대한 처리 필요성 확인
+     */
     @Test
     void testAdminGetUserListIncompleteDriveCount() {
         int page = 1;
@@ -433,6 +511,11 @@ class UserAdminServiceImplTest {
         assertTrue(ex.getMessage().contains("Cannot invoke \"java.lang.Integer.intValue()\""));
     }
 
+    /**
+     * adminGetUserDetail 테스트 - 정상 반환
+     * 시나리오: 사용자 상세 정보 조회 성공
+     * 기대: 필드 매핑 및 서비스 호출 정상 수행
+     */
     @Test
     void testAdminGetUserDetail_successfullyFindUser() {
         String userId = "user1";
@@ -468,6 +551,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(Collections.singletonList("user1"));
     }
 
+    /**
+     * adminGetUserDetail 테스트 - userFetchService 예외
+     * 시나리오: 상세 정보 조회 실패
+     * 기대: 예외 발생 및 후속 호출 생략
+     */
     @Test
     void testAdminGetUserDetail_userFetchServiceException() {
         String userId = "user1";
@@ -482,6 +570,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, never()).fetchDriveCountMap(anyList());
     }
 
+    /**
+     * adminGetUserDetail 테스트 - dashboardFetchService 예외
+     * 시나리오: 사용자 정보는 있으나 주행 수 조회 실패
+     * 기대: 예외 발생 및 서비스 호출 검증
+     */
     @Test
     void testAdminGetUserDetail_dashboardFetchServiceException() {
         String userId = "user1";
@@ -508,6 +601,11 @@ class UserAdminServiceImplTest {
         verify(dashboardFetchService, times(1)).fetchDriveCountMap(Collections.singletonList("user1"));
     }
 
+    /**
+     * adminGetUserReward 테스트 - 보상 내역 없음
+     * 시나리오: 해당 사용자에 대한 리워드 없음
+     * 기대: 빈 리스트 반환
+     */
     @Test
     void testAdminGetUserReward_emptyRewards() {
         String userId = "user1";
@@ -523,6 +621,11 @@ class UserAdminServiceImplTest {
         verify(rewardFetchService, times(1)).fetchRewardFilter(eq(userId), any(RCRewardFilterReq.class));
     }
 
+    /**
+     * adminGetUserReward 테스트 - 보상 내역 존재
+     * 시나리오: 사용자에게 리워드가 존재하는 경우
+     * 기대: 필드 매핑 및 응답 검증
+     */
     @Test
     void testAdminGetUserReward_withRewards() {
         String userId = "user1";
@@ -549,6 +652,11 @@ class UserAdminServiceImplTest {
         verify(rewardFetchService, times(1)).fetchRewardFilter(eq(userId), any(RCRewardFilterReq.class));
     }
 
+    /**
+     * adminGetUserDriveList 테스트 - 정상 주행 정보 반환
+     * 시나리오: 주행 정보, 리워드, 이벤트 정상 수신
+     * 기대: 올바른 정보 매핑 및 필드 검증
+     */
     @Test
     void testAdminGetUserDriveList_successfulResult() {
         String userId = "user1";
@@ -614,6 +722,10 @@ class UserAdminServiceImplTest {
     }
 
 
+    /**
+     * adminGetUserDriveList 테스트 - dashboardFetchService 예외
+     * 기대: 예외 발생 및 이후 호출 생략
+     */
     @Test
     void testAdminGetUserDriveList_dashboardServiceException() {
         String userId = "user1";
@@ -633,6 +745,10 @@ class UserAdminServiceImplTest {
         verify(analysisFetchService, never()).getTotalEventCntByType(anyList());
     }
 
+    /**
+     * adminGetUserDriveList 테스트 - rewardFetchService 예외
+     * 기대: 예외 발생 및 이후 호출 생략
+     */
     @Test
     void testAdminGetUserDriveList_rewardServiceException() {
         String userId = "user1";
@@ -666,7 +782,10 @@ class UserAdminServiceImplTest {
         verify(analysisFetchService, never()).getTotalEventCntByType(anyList());
     }
 
-
+    /**
+     * adminGetUserDriveList 테스트 - analysisFetchService 예외
+     * 기대: 예외 발생 및 호출 검증
+     */
     @Test
     void testAdminGetUserDriveList_analysisServiceException() {
         String userId = "user1";

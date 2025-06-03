@@ -36,6 +36,11 @@ public class UserControllerTest {
     // =========================
     // USER FILTER TEST
     // ==========================
+    /**
+     * userFilter 테스트 - 성공
+     * 시나리오: 유효한 필터 조건으로 사용자 필터링 성공
+     * 기대: 정상 응답 및 필터링 결과 포함
+     */
     @Test
     void userFilter_Success() {
         // Mock behavior for successful filtering
@@ -51,6 +56,11 @@ public class UserControllerTest {
         assertEquals(mockFilteredData, ((Map<?, ?>) response.getBody().getData()).get("filterResult"));
     }
 
+    /**
+     * userFilter 테스트 - 유효하지 않은 파라미터
+     * 시나리오: 필터 요청 값이 잘못된 경우
+     * 기대: IllegalArgumentException 발생
+     */
     @Test
     void userFilter_InvalidParameters() {
         // Mock behavior for invalid parameters
@@ -65,6 +75,11 @@ public class UserControllerTest {
         assertEquals("Invalid request parameters", thrown.getMessage());
     }
 
+    /**
+     * userFilter 테스트 - 내부 서버 오류
+     * 시나리오: 서비스 내부 오류로 실패
+     * 기대: RuntimeException 발생
+     */
     @Test
     void userFilter_InternalServerError() {
         // Mock for internal server error
@@ -82,6 +97,11 @@ public class UserControllerTest {
     // =========================
     // USER DETAIL TEST
     // ==========================
+    /**
+     * getUser 테스트 - 성공
+     * 시나리오: 사용자 ID로 상세 정보 조회 성공
+     * 기대: 사용자 상세 정보 포함된 응답 반환
+     */
     @Test
     void getUser_Success() {
         // Mock behavior for successful retrieval of user detail
@@ -97,6 +117,11 @@ public class UserControllerTest {
         assertEquals(mockUserDetail, ((Map<?, ?>) response.getBody().getData()).get("userDetail"));
     }
 
+    /**
+     * getUser 테스트 - 사용자 없음
+     * 시나리오: 존재하지 않는 사용자 ID로 조회 시도
+     * 기대: RuntimeException 발생
+     */
     @Test
     void getUser_UserNotFound() {
         // Mock behavior where user is not found
@@ -111,6 +136,11 @@ public class UserControllerTest {
         assertEquals("User Not Found", thrown.getMessage());
     }
 
+    /**
+     * getUser 테스트 - 내부 서버 오류
+     * 시나리오: 상세 조회 중 예외 발생
+     * 기대: RuntimeException 발생
+     */
     @Test
     void getUser_InternalServerError() {
         // Mock for internal server error
@@ -128,6 +158,11 @@ public class UserControllerTest {
     // =========================
     // USER LIST TEST
     // ==========================
+    /**
+     * getUserList 테스트 - 성공
+     * 시나리오: 페이지 요청으로 사용자 리스트 정상 반환
+     * 기대: 사용자 목록 응답 포함
+     */
     @Test
     void getUserList_Success() {
         // Mock behavior for successful retrieval
@@ -142,6 +177,11 @@ public class UserControllerTest {
         assertEquals(mockUsers, ((Map<?, ?>) response.getBody().getData()).get("users"));
     }
 
+    /**
+     * getUserList 테스트 - 잘못된 파라미터
+     * 시나리오: 음수 페이지 번호 등 유효하지 않은 값
+     * 기대: IllegalArgumentException 발생
+     */
     @Test
     void getUserList_InvalidParameters() {
         // Mock behavior for exception on invalid parameters
@@ -158,6 +198,12 @@ public class UserControllerTest {
     // =========================
     // USER SEARCH TEST
     // ==========================
+
+    /**
+     * searchUser 테스트 - 성공
+     * 시나리오: 검색어로 사용자 검색 성공
+     * 기대: 일치하는 사용자 목록 반환
+     */
     @Test
     void searchUser_Success() {
         // Mock behavior for successful search
@@ -173,6 +219,11 @@ public class UserControllerTest {
         assertEquals(mockUsers, ((Map<?, ?>) response.getBody().getData()).get("searchResult"));
     }
 
+    /**
+     * searchUser 테스트 - 내부 서버 오류
+     * 시나리오: 검색 중 예외 발생
+     * 기대: RuntimeException 발생
+     */
     @Test
     void searchUser_InternalServerError() {
         // Mock behavior for exception
@@ -189,6 +240,12 @@ public class UserControllerTest {
     // =========================
     // USER REWARD TEST
     // ==========================
+
+    /**
+     * getUserRewards 테스트 - 성공
+     * 시나리오: 사용자 보상 이력 정상 반환
+     * 기대: 응답에 리워드 리스트 포함
+     */
     @Test
     void getUserRewards_Success() {
         // Mock behavior for successful reward history retrieval
@@ -206,6 +263,11 @@ public class UserControllerTest {
         assertEquals(mockRewards, ((Map<?, ?>) response.getBody().getData()).get("rewardHistory"));
     }
 
+    /**
+     * getUserRewards 테스트 - 사용자 없음
+     * 시나리오: 존재하지 않는 사용자 ID로 보상 요청
+     * 기대: RuntimeException 발생
+     */
     @Test
     void getUserRewards_UserNotFound() {
         // Mock behavior where the specified user does not exist
@@ -222,6 +284,11 @@ public class UserControllerTest {
         assertEquals("User Not Found", thrown.getMessage());
     }
 
+    /**
+     * getUserRewards 테스트 - 내부 서버 오류
+     * 시나리오: 서비스 예외 발생
+     * 기대: RuntimeException 발생
+     */
     @Test
     void getUserRewards_InternalServerError() {
         // Mock behavior for internal server error scenario
@@ -241,6 +308,11 @@ public class UserControllerTest {
     // =========================
     // USER DRIVE TEST
     // ==========================
+    /**
+     * getUserDrives 테스트 - 성공
+     * 시나리오: 운전 이력 조회 정상 수행
+     * 기대: 주행 내역, startTime, driveId 응답 포함
+     */
     @Test
     void getUserDrives_Success() {
         // Mock successful behavior
@@ -266,6 +338,11 @@ public class UserControllerTest {
         assertEquals(mockResponse.getDriveId(), data.get("driveId"));
     }
 
+    /**
+     * getUserDrives 테스트 - 사용자 없음
+     * 시나리오: 존재하지 않는 사용자로 요청 시도
+     * 기대: RuntimeException 발생
+     */
     @Test
     void getUserDrives_UserNotFound() {
         // Mock scenario where user is not found
@@ -284,6 +361,12 @@ public class UserControllerTest {
         assertEquals("User Not Found", thrown.getMessage());
     }
 
+
+    /**
+     * getUserDrives 테스트 - 내부 서버 오류
+     * 시나리오: 주행 정보 조회 중 오류 발생
+     * 기대: RuntimeException 발생
+     */
     @Test
     void getUserDrives_InternalServerError() {
         // Mock internal server error scenario

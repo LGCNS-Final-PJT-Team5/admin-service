@@ -38,6 +38,13 @@ class AdminDashboardServiceImplTest {
         MockitoAnnotations.openMocks(this);
     }
 
+    /**
+     * getMonthlyUserStatistics 테스트 - 정상 사용자 통계 및 트렌드 조회
+     * 시나리오: 사용자 통계(summary)와 월별 사용자 트렌드(userTrend)를 정상적으로 조회하는 경우
+     * 기대:
+     *  - summary: 신규 유저 수, 증가율, 이탈률이 정확히 매핑됨
+     *  - userTrends: 월별 유저 데이터가 변환되어 응답됨
+     */
     @Test
     void testGetMonthlyUserStatistics() {
         // Mocking the data
@@ -80,6 +87,12 @@ class AdminDashboardServiceImplTest {
         assertEquals(20, firstTrend.getChurnedUsers());
     }
 
+    /**
+     * getMonthlyDrivesStatistics 테스트 - 정상 월별 주행 수 통계 조회
+     * 시나리오: Dashboard 서비스로부터 월별 주행 횟수 데이터를 받아올 수 있는 경우
+     * 기대:
+     *  - MonthlyDrivesItem 리스트로 매핑되고, 각 필드(year, month, count)가 정확히 변환됨
+     */
     @Test
     void testGetMonthlyDrivesStatistics() {
         // Mocking the data

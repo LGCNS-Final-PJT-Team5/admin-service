@@ -35,7 +35,11 @@ class AdminDashboardControllerTest {
         mockMvc = MockMvcBuilders.standaloneSetup(adminDashboardController).build();
     }
 
-
+    /**
+     * getMonthlyDrivesStatistics 테스트 - 정상 응답
+     * 시나리오: 월별 운전 통계를 2개월치 mock 데이터로 주입
+     * 기대: status 200, message 정상, 각 필드(year, month, count) 정확히 반환됨
+     */
     @Test
     void getMonthlyDrivesStatistics_ShouldReturnMonthlyDrivesStatistics() throws Exception {
         List<MonthlyDrivesItem> mockMonthlyDrivesStatistics = Arrays.asList(
@@ -66,7 +70,12 @@ class AdminDashboardControllerTest {
                 .andExpect(jsonPath("$.data.monthlyDrivesStatistics[1].count").value(28));
     }
 
-@Test
+    /**
+     * getMonthlyUsersStatistics 테스트 - 정상 응답
+     * 시나리오: 사용자 증가 추이 통계를 Map 형식으로 주입
+     * 기대: status 200, message 정상, 각 키("2025-01", "2025-02")에 해당 값 정확히 반환됨
+     */
+    @Test
     void getMonthlyUsersStatistics_ShouldReturnMonthlyUsersStatistics() throws Exception {
         Map<String, Object> mockUserStatistics = Map.of(
                 "2025-01", 120,
