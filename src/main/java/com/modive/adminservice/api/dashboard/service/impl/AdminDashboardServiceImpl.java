@@ -14,6 +14,7 @@ import com.modive.adminservice.external.user.dto.res.UCUserMonthlyItem;
 import com.modive.adminservice.external.user.dto.res.UCUserStatisticsSummaryItem;
 import com.modive.adminservice.external.user.service.UserFetchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AdminDashboardServiceImpl implements AdminDashboardService {
@@ -34,35 +36,72 @@ public class AdminDashboardServiceImpl implements AdminDashboardService {
      */
     @Override
     public Map<String, TotalCntAndRateItem> getDashboardStatistics(String userId) {
-        UCTotalCntAndRateItem userTotalCountAndChangeRate = userFetchService.fetchUserTotalCountAndChangeRate();
-        TotalCntAndRateItem totalUsers = TotalCntAndRateItem.builder()
-                .value(userTotalCountAndChangeRate.getValue())
-                .changeRate(userTotalCountAndChangeRate.getChangeRate())
-                .build();
-
-        UCTotalCntAndRateItem deviceTotalCountAndChangeRate = userFetchService.fetchDevicesTotalCountAndChangeRate();
-        TotalCntAndRateItem totalDevices = TotalCntAndRateItem.builder()
-                .value(deviceTotalCountAndChangeRate.getValue())
-                .changeRate(deviceTotalCountAndChangeRate.getChangeRate())
-                .build();
-
-        DCTotalCntAndRateItem driveTotalCountAndChangeRate = dashboardFetchService.fetchDriveTotalCntAndRate();
-        TotalCntAndRateItem totalDrives = TotalCntAndRateItem.builder()
-                .value(driveTotalCountAndChangeRate.getValue())
-                .changeRate(driveTotalCountAndChangeRate.getChangeRate())
-                .build();
-
-        RCRewardTotalCntAndRateItem rewardTotalCntAndRateItem = rewardFetchService.fetchTotalIssuedRewards(userId);
-        TotalCntAndRateItem totalIssuedRewards = TotalCntAndRateItem.builder()
-                .value(rewardTotalCntAndRateItem.getValue())
-                .changeRate(rewardTotalCntAndRateItem.getChangeRate())
-                .build();
-
         Map<String, TotalCntAndRateItem> dashboardStatistics = new HashMap<>();
-        dashboardStatistics.put("totalUsers", totalUsers);
-        dashboardStatistics.put("totalDevices", totalDevices);
-        dashboardStatistics.put("totalDrives", totalDrives);
-        dashboardStatistics.put("totalIssuedRewards", totalIssuedRewards);
+
+        // 사용자 수 통계
+        try {
+            UCTotalCntAndRateItem userTotalCountAndChangeRate = userFetchService.fetchUserTotalCountAndChangeRate();
+            TotalCntAndRateItem totalUsers = TotalCntAndRateItem.builder()
+                    .value(userTotalCountAndChangeRate.getValue())
+                    .changeRate(userTotalCountAndChangeRate.getChangeRate())
+                    .build();
+            dashboardStatistics.put("totalUsers", totalUsers);
+        } catch (Exception e) {
+            log.error("Failed to fetch user statistics: {}", e.getMessage(), e);
+            // 기본값으로 대체
+            dashboardStatistics.put("totalUsers", TotalCntAndRateItem.builder()
+                    .value(0L)
+                    .changeRate(0.0)
+                    .build());
+        }
+
+        // 디바이스 수 통계
+        try {
+            UCTotalCntAndRateItem deviceTotalCountAndChangeRate = userFetchService.fetchDevicesTotalCountAndChangeRate();
+            TotalCntAndRateItem totalDevices = TotalCntAndRateItem.builder()
+                    .value(deviceTotalCountAndChangeRate.getValue())
+                    .changeRate(deviceTotalCountAndChangeRate.getChangeRate())
+                    .build();
+            dashboardStatistics.put("totalDevices", totalDevices);
+        } catch (Exception e) {
+            log.error("Failed to fetch device statistics: {}", e.getMessage(), e);
+            dashboardStatistics.put("totalDevices", TotalCntAndRateItem.builder()
+                    .value(0L)
+                    .changeRate(0.0)
+                    .build());
+        }
+
+        // 주행 수 통계
+        try {
+            DCTotalCntAndRateItem driveTotalCountAndChangeRate = dashboardFetchService.fetchDriveTotalCntAndRate();
+            TotalCntAndRateItem totalDrives = TotalCntAndRateItem.builder()
+                    .value(driveTotalCountAndChangeRate.getValue())
+                    .changeRate(driveTotalCountAndChangeRate.getChangeRate())
+                    .build();
+            dashboardStatistics.put("totalDrives", totalDrives);
+        } catch (Exception e) {
+            log.error("Failed to fetch drive statistics: {}", e.getMessage(), e);
+            dashboardStatistics.put("totalDrives", TotalCntAndRateItem.builder()
+                    .value(0L)
+                    .changeRate(0.0)
+                    .build());
+        }
+
+        // 리워드 통계
+        try {
+            RCRewardTotalCntAndRateItem rewardTotalCntAndRateItem = rewardFetchService.fetchTotalIssuedRewards(userId);
+            TotalCntAndRateItem totalIssuedRewards = TotalCntAndRateItem.builder()
+                    .value(rewardTotalCntAndRateItem.getValue())
+                    .changeRate(rewardTotalCntAndRateItem.getChangeRate())
+                    .build();
+            dashboardStatistics.put("totalIssuedRewards", totalIssuedRewards);
+        } catch (Exception e) {
+            log.error("Failed to fetch reward statistics: {}", e.getMessage(), e);
+            dashboardStatistics.put("totalIssuedRewards", TotalCntAndRateItem.builder()
+                    .value(0L)
+                    .changeRate(0.0)
+                    .build());
+        }
 
         return dashboardStatistics;
     }
