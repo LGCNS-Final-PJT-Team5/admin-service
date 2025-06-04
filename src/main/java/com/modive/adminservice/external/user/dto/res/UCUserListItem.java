@@ -1,5 +1,6 @@
 package com.modive.adminservice.external.user.dto.res;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
@@ -21,5 +22,7 @@ public class UCUserListItem {
     private int experience;
     private String joinedAt;
     private int seedBalance;
+
+    @JsonProperty("isActive")
     private int isActive;
 }
