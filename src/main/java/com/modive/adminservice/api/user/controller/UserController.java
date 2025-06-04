@@ -206,9 +206,7 @@ public class UserController {
         data.put("driveHistory", result.getDriveHistory());
         data.put("startTime", result.getStartTime());
         data.put("driveId", result.getDriveId());
-
-        System.out.println(data);
-
+        
         return new ResponseEntity<>(
                 CommonRes.success(data, "사용자 운전 내역 조회에 성공하였습니다."),
                 HttpStatus.OK
