@@ -13,7 +13,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class RCRewardFilterItem {
-    private Long rewardId;
+    private String rewardId;
 
 //    TODO 응답 DTO에 이메일 포함 여부 확인
 //    private String email;
