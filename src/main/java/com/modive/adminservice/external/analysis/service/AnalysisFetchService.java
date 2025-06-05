@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface AnalysisFetchService {
-    List<EventsByDriveDTO> getTotalEventCntByType(Long driveId);
+    List<EventsByDriveDTO> getTotalEventCntByType(String driveId);
     List<TotalEventCntByReasonItem> getTotalEventCntByType();
-    Map<Long, List<EventsByDriveDTO>> getTotalEventCntByType(List<Long> driveIds);
+    Map<String, List<EventsByDriveDTO>> getTotalEventCntByType(List<String> driveIds);
 }

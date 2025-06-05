@@ -11,7 +11,6 @@ import com.modive.adminservice.global.error.exception.RestApiException;
 import com.modive.adminservice.external.reward.service.RewardFetchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -33,7 +32,7 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * @return 필터링 결과
      */
     @Override
-    public List<RCRewardFilterItem> fetchRewardFilter(Long userId, RCRewardFilterReq req) {
+    public List<RCRewardFilterItem> fetchRewardFilter(String userId, RCRewardFilterReq req) {
         CommonRes<RCRewardFilterResData> res = rewardClient.filterReward(userId, req);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.filterReward - response or data is null");
@@ -49,14 +48,14 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * @return drive ID별 리워드 조회 결과
      */
     @Override
-    public Map<Long, Integer> fetchRewardMapByDrive(Long userId, RCRewardByDriveReq req) {
+    public Map<String, Integer> fetchRewardMapByDrive(String userId, RCRewardByDriveReq req) {
         CommonRes<RCRewardByDriveResData> res = rewardClient.getRewardByDrive(userId, req);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.getRewardByDrive(req = {}) - response or data is null", req.toString());
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        Map<Long, Integer> rewardMap = new HashMap<>();
+        Map<String, Integer> rewardMap = new HashMap<>();
         for (RCRewardByDriveItem item : res.data.getRewardsByDrive()) {
             rewardMap.put(item.getDriveId(), item.getReward());
         }
@@ -68,14 +67,14 @@ public class RewardFetchServiceImpl implements RewardFetchService {
      * 리워드 서비스에서 발급된 리워드 합계 및 증감률 조회
      */
     @Override
-    public RCRewardTotalCntAndRateItem fetchTotalIssuedRewards(Long userId) {
+    public RCRewardTotalCntAndRateItem fetchTotalIssuedRewards(String userId) {
         CommonRes<RCTotalRewardResData> res = rewardClient.getTotalIssuedRewards(userId);
         if (res == null || res.getData() == null) {
             log.warn("RewardClient.getTotalIssuedRewards() - response or data is null");
             throw new RestApiException(ErrorCode.FEIGN_DATA_MISSING);
         }
 
-        return res.getData().getTotalIssuedRewards();
+        return res.getData().getTotalIssued();
     }
 
     //</editor-folder desc="REWARD FOR USER REQUEST">
@@ -125,6 +124,8 @@ public class RewardFetchServiceImpl implements RewardFetchService {
 
     @Override
     public RewardByReasonMonthDto fetchRewardByReasonMonth(String userId, int year, int month) {
+        validateMonth(month);
+
         String req = String.format("%d-%02d", year, month);
         CommonRes<RewardByReasonMonthDto> res = rewardClient.fetchRewardByReasonMonth(userId, req);
         if (res == null || res.getData() == null) {
@@ -163,6 +164,11 @@ public class RewardFetchServiceImpl implements RewardFetchService {
         }
         return res.getData();
     }
-    //</editor-folder desc="REWARD FOR REWARD REQUEST">
 
+    private void validateMonth(int month) {
+        if (month < 1 || month > 12) {
+            log.warn("Invalid month value: {}. Month must be between 1 and 12", month);
+            throw new RestApiException(ErrorCode.INVALID_MONTH_VALUE);
+        }
+    }
 }

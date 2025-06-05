@@ -14,7 +14,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RCRewardFilterReq {
-    private Long userId;
+    private String userId;
     private String reason;
     private String date;
     private String email;

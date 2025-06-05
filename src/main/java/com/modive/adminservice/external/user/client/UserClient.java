@@ -46,7 +46,7 @@ public interface UserClient {
      * @return CommonRes 형태의 상세 조회 결과 응답
      */
     @GetMapping("/user/{userId}")
-    CommonRes<UCUserListItem> getUserDetail(@PathVariable Long userId);
+    CommonRes<UCUserListItem> getUserDetail(@PathVariable String userId);
 
     /**
      * 페이지네이션 정보를 기반으로 사용자 필터링 결과 조회
@@ -64,7 +64,7 @@ public interface UserClient {
      * @return 비활성화 결과
      */
     @PostMapping("/user/{userId}/delete")
-    CommonRes<String> deleteUser(@PathVariable Long userId);
+    CommonRes<String> deleteUser(@PathVariable String userId);
 
     @GetMapping("/user/total")
     CommonRes<UCTotalUserResData> getTotalUser();

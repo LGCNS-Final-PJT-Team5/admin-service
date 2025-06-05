@@ -1,5 +1,6 @@
 package com.modive.adminservice.api.user.dto.res;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
@@ -13,12 +14,14 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserListItem {
-    private Long userId;
+    private String userId;
     private String nickname;
     private String email;
     private int experience;
     private String joinedAt;
     private int driveCount;
     private int seedBalance;
+
+    @JsonProperty("isActive")
     private int isActive;
 }

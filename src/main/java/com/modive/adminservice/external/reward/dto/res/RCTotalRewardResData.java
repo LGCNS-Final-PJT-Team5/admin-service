@@ -10,5 +10,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RCTotalRewardResData {
-    private RCRewardTotalCntAndRateItem totalIssuedRewards;
+    private RCRewardTotalCntAndRateItem totalIssued;
 }

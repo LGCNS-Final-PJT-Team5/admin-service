@@ -15,6 +15,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DCDriveCountItem {
-    private Long userId;
+    private String userId;
     private int driveCount;
 }

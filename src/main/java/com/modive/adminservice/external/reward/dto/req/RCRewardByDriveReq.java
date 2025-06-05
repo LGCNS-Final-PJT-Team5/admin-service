@@ -15,5 +15,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RCRewardByDriveReq {
-    private List<Long> driveIds;
+    private List<String> driveIds;
 }

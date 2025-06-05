@@ -23,7 +23,7 @@ public class AnalysisFetchServiceImpl implements AnalysisFetchService {
      * @return 특정 운전의 이벤트 발생 횟수
      */
     @Override
-    public List<EventsByDriveDTO> getTotalEventCntByType(Long driveId) {
+    public List<EventsByDriveDTO> getTotalEventCntByType(String driveId) {
         return analysisClient.getTotalEventCntByType(driveId);
     }
 
@@ -40,7 +40,7 @@ public class AnalysisFetchServiceImpl implements AnalysisFetchService {
 
     // 주행 목록으로 이벤트 발생 목록 받아오는 함수.
     @Override
-    public Map<Long, List<EventsByDriveDTO>> getTotalEventCntByType(List<Long> driveIds) {
+    public Map<String, List<EventsByDriveDTO>> getTotalEventCntByType(List<String> driveIds) {
         return analysisClient.getTotalEventCntByType(driveIds);
     }
 }

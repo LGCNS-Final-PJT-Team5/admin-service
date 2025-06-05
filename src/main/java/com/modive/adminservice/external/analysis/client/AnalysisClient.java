@@ -32,7 +32,7 @@ public interface AnalysisClient {
      * @return 특정 운전의 이벤트별 횟수
      */
     @GetMapping("/events/{driveId}")
-    List<EventsByDriveDTO> getTotalEventCntByType(@PathVariable Long driveId);
+    List<EventsByDriveDTO> getTotalEventCntByType(@PathVariable String driveId);
 
     /**
      * 운전별 누적 이벤트 횟수 계산
@@ -43,5 +43,5 @@ public interface AnalysisClient {
     List<TotalEventCntByReasonItem> getTotalEventCntByType();
 
     @PostMapping("/events/drives")
-    Map<Long, List<EventsByDriveDTO>> getTotalEventCntByType(@RequestBody List<Long> driveIds);
+    Map<String, List<EventsByDriveDTO>> getTotalEventCntByType(@RequestBody List<String> driveIds);
 }

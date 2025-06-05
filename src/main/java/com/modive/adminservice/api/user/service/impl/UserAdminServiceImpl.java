@@ -51,7 +51,7 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @param driveCountMap 사용자별 운전 횟수 맵
      * @return 병합된 사용자 리스트
      */
-    private List<UserListItem> mergeUserData(List<UCUserListItem> users, Map<Long, Integer> driveCountMap) {
+    private List<UserListItem> mergeUserData(List<UCUserListItem> users, Map<String, Integer> driveCountMap) {
         List<UserListItem> userListRes = new ArrayList<>();
         for (UCUserListItem user : users) {
             Integer driveCount = driveCountMap.get(user.getUserId());
@@ -87,11 +87,11 @@ public class UserAdminServiceImpl implements UserAdminService {
     @Override
     public List<UserListItem> adminGetUserList(int page, int pageSize) {
         List<UCUserListItem> users = userFetchService.fetchUsers(page, pageSize);
-        List<Long> userIds = users.stream()
+        List<String> userIds = users.stream()
                 .map(UCUserListItem::getUserId)
                 .collect(Collectors.toList());
 
-        Map<Long, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
+        Map<String, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
         return mergeUserData(users, driveCountMap);
     }
 
@@ -104,11 +104,11 @@ public class UserAdminServiceImpl implements UserAdminService {
     @Override
     public List<UserListItem> adminSearchUser(String searchKeyword) {
         List<UCUserListItem> users = userFetchService.fetchSearchUsers(searchKeyword);
-        List<Long> userIds = users.stream()
+        List<String> userIds = users.stream()
                 .map(UCUserListItem::getUserId)
                 .collect(Collectors.toList());
 
-        Map<Long, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
+        Map<String, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
         return mergeUserData(users, driveCountMap);
     }
 
@@ -119,13 +119,13 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @return 사용자 상세 데이터
      */
     @Override
-    public List<UserListItem> adminGetUserDetail(Long userId) {
+    public List<UserListItem> adminGetUserDetail(String userId) {
         List<UCUserListItem> users = userFetchService.fetchUserDetail(userId);
-        List<Long> userIds = users.stream()
+        List<String> userIds = users.stream()
                 .map(UCUserListItem::getUserId)
                 .collect(Collectors.toList());
 
-        Map<Long, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
+        Map<String, Integer> driveCountMap = dashboardFetchService.fetchDriveCountMap(userIds);
         return mergeUserData(users, driveCountMap);
     }
 
@@ -147,7 +147,7 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @param userId 비활성화 대상의 유저 ID
      */
     @Override
-    public void adminInactiveUser(Long userId) {
+    public void adminInactiveUser(String userId) {
         userFetchService.inactiveUser(userId);
     }
 
@@ -160,7 +160,7 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @return 씨앗 내역
      */
     @Override
-    public List<UserRewardItem> adminGetUserReward(Long userId, int page, int pageSize) {
+    public List<UserRewardItem> adminGetUserReward(String userId, int page, int pageSize) {
         RCRewardFilterReq req = RCRewardFilterReq.builder()
                 .userId(userId)
                 .page(page)
@@ -188,7 +188,7 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @param drives 운전 이력 리스트
      * @return drive ID 리스트
      */
-    private List<Long> extractDriveIds(List<DCDriveListItem> drives) {
+    private List<String> extractDriveIds(List<DCDriveListItem> drives) {
         return drives.stream()
                 .map(DCDriveListItem::getDriveId)
                 .collect(Collectors.toUnmodifiableList());
@@ -201,7 +201,7 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @param rewardMap 리워드 서비스에서 조회한 리워드 내역
      * @return 주행 정보
      */
-    private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<Long, Integer> rewardMap, Map<Long, List<EventsByDriveDTO>> events) {
+    private List<UserDriveListItem> enrichDriveItems(List<DCDriveListItem> drives, Map<String, Integer> rewardMap, Map<String, List<EventsByDriveDTO>> events) {
         List<UserDriveListItem> userDriveItems = new ArrayList<>();
         for (DCDriveListItem drive : drives) {
 
@@ -236,18 +236,18 @@ public class UserAdminServiceImpl implements UserAdminService {
      * @return 운전 내역 리스트
      */
     @Override
-    public UserDriveListRes adminGetUserDriveList(Long userId, int pageSize, String startTime, String driveId ) {
+    public UserDriveListRes adminGetUserDriveList(String userId, int pageSize, String startTime, String driveId ) {
         DCDriveListResData dashboardRes = dashboardFetchService.fetchDriveListByUserId(userId, pageSize, startTime, driveId);
         List<DCDriveListItem> drives = dashboardRes.getDriveHistory().getList();
 
-        List<Long> driveIds = extractDriveIds(drives);
+        List<String> driveIds = extractDriveIds(drives);
 
         if (driveIds.isEmpty()) {
             return new UserDriveListRes();
         }
 
-        Map<Long, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(userId, new RCRewardByDriveReq(driveIds));
-        Map<Long, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
+        Map<String, Integer> rewardMap = rewardFetchService.fetchRewardMapByDrive(userId, new RCRewardByDriveReq(driveIds));
+        Map<String, List<EventsByDriveDTO>> events = analysisFetchService.getTotalEventCntByType(driveIds);
 
 //        // 테스트용 Mock: 리워드 맵을 빈 값 또는 더미 값으로 대체
 //        Map<Long, Integer> rewardMap = new HashMap<>();

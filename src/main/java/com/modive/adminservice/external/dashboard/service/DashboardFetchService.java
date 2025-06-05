@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface DashboardFetchService {
-    Map<Long, Integer> fetchDriveCountMap(List<Long> userIds);
-    DCDriveListResData fetchDriveListByUserId(Long userId, int pageSize, String startTime, String driveId);
+    Map<String, Integer> fetchDriveCountMap(List<String> userIds);
+    DCDriveListResData fetchDriveListByUserId(String userId, int pageSize, String startTime, String driveId);
     DCTotalCntAndRateItem fetchDriveTotalCntAndRate();
     List<DCMonthlyDriveItem> fetchMonthlyDrivesStatistics();
 }

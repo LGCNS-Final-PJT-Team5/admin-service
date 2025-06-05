@@ -9,9 +9,9 @@ import java.util.List;
 public interface UserAdminService {
     List<UserListItem> adminGetUserList(int page, int pageSize);
     List<UserListItem> adminSearchUser(String searchKeyword);
-    List<UserListItem>  adminGetUserDetail(Long userId);
+    List<UserListItem>  adminGetUserDetail(String userId);
     UCFilterUserResData adminFilterUser(UserFilterReq req);
-    void adminInactiveUser(Long userId);
-    List<UserRewardItem> adminGetUserReward(Long userId, int page, int pageSize);
-    UserDriveListRes adminGetUserDriveList(Long userId, int pageSize, String startTime, String driveId);
+    void adminInactiveUser(String userId);
+    List<UserRewardItem> adminGetUserReward(String userId, int page, int pageSize);
+    UserDriveListRes adminGetUserDriveList(String userId, int pageSize, String startTime, String driveId);
 }

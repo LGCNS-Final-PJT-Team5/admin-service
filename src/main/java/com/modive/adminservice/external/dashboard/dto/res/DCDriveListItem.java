@@ -1,9 +1,6 @@
 package com.modive.adminservice.external.dashboard.dto.res;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
@@ -16,8 +13,9 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class DCDriveListItem {
-    private Long driveId;
+    private String driveId;
     private String date;
     private int driveDuration;
 }

@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.4.5'
     id 'io.spring.dependency-management' version '1.1.7'
+    id 'jacoco'
 }
 
 group = 'com.modive'
@@ -29,8 +30,6 @@ ext {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
-//    implementation 'org.springframework.cloud:spring-cloud-starter-config'
-//    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
@@ -38,9 +37,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
 
-    // 통신을 위함
-    implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 }
 
 dependencyManagement {
@@ -51,4 +52,27 @@ dependencyManagement {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+jacocoTestReport {
+    dependsOn test // 테스트 후 리포트 생성
+
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true // HTML 커버리지 리포트 생성
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    '**/dto/**',
+                    '**/config/**',
+                    '**/exception/**',
+                    '**/error/**',
+                    '**/client/**',
+                    '**/AdminServiceApplication.*'
+            ])
+        }))
+    }
 }
