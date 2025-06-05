@@ -343,7 +343,7 @@ class RewardFetchServiceTest {
                 () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
 
         // 정확한 ErrorCode 검증
-        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+        assertEquals(ErrorCode. INVALID_INPUT_VALUE, exception.getErrorCode());
 
         // 외부 API가 호출되지 않았는지 검증 (방어 로직 확인)
         verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
@@ -366,7 +366,7 @@ class RewardFetchServiceTest {
                 () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
 
         // 정확한 ErrorCode 검증
-        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_INPUT_VALUE, exception.getErrorCode());
 
         // 외부 API 호출 차단 확인
         verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
@@ -389,7 +389,7 @@ class RewardFetchServiceTest {
                 () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
 
         // 정확한 ErrorCode 검증
-        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_INPUT_VALUE, exception.getErrorCode());
 
         // 외부 API 호출 차단 확인 (불필요한 네트워크 호출 방지)
         verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
@@ -411,7 +411,7 @@ class RewardFetchServiceTest {
         RestApiException exception = assertThrows(RestApiException.class,
                 () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
 
-        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_INPUT_VALUE, exception.getErrorCode());
         verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
     }
 
@@ -431,7 +431,7 @@ class RewardFetchServiceTest {
         RestApiException exception = assertThrows(RestApiException.class,
                 () -> rewardFetchService.fetchRewardByReasonMonth(userId, year, month));
 
-        assertEquals(ErrorCode.INVALID_MONTH_VALUE, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_INPUT_VALUE, exception.getErrorCode());
         verify(rewardClient, never()).fetchRewardByReasonMonth(anyString(), anyString());
     }
 

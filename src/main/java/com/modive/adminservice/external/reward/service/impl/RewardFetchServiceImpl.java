@@ -168,7 +168,7 @@ public class RewardFetchServiceImpl implements RewardFetchService {
     private void validateMonth(int month) {
         if (month < 1 || month > 12) {
             log.warn("Invalid month value: {}. Month must be between 1 and 12", month);
-            throw new RestApiException(ErrorCode.INVALID_MONTH_VALUE);
+            throw new RestApiException(ErrorCode. INVALID_INPUT_VALUE);
         }
     }
 }
