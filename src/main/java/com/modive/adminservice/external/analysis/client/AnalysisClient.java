@@ -7,6 +7,7 @@ import com.modive.adminservice.external.reward.dto.req.RCRewardFilterReq;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,10 @@ import java.util.Map;
  * analysis-service와 통신하는 Feign Client.
  */
 
-@FeignClient(name="analysis-service")
+
+@Lazy
+@FeignClient(name="analysis-service",
+        url="${service.analysis.url}")
 public interface AnalysisClient {
 
     /**

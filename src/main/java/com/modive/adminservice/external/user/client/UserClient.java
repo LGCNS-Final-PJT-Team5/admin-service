@@ -5,12 +5,22 @@ import com.modive.adminservice.global.dto.res.CommonRes;
 import com.modive.adminservice.api.user.dto.req.UserFilterReq;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 import org.springframework.web.bind.annotation.*;
 
 /**
  * user-service와 통신하는 Feign Client.
  */
-@FeignClient(name="user-service")
+
+@Lazy
+@FeignClient(name="user-service",
+        url="${service.user.url}")
 public interface UserClient {
     /**
      * 페이지네이션 정보를 기반으로 사용자 목록 조회

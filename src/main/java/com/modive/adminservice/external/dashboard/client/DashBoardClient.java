@@ -6,6 +6,7 @@ import com.modive.adminservice.external.dashboard.dto.res.DCMontlyDriveResData;
 import com.modive.adminservice.external.dashboard.dto.res.DCTotalDriveResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,7 +15,9 @@ import java.util.Map;
 /**
  * dashboard-service와 통신하는 Feign Client.
  */
-@FeignClient(name = "dashboard-service")
+
+@FeignClient(name="dashboard-service",
+        url="${service.dashboard.url}")
 public interface DashBoardClient {
 
     /**
