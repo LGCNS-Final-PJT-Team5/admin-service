@@ -11,7 +11,6 @@ import com.modive.adminservice.global.error.exception.RestApiException;
 import com.modive.adminservice.external.reward.service.RewardFetchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -125,6 +124,8 @@ public class RewardFetchServiceImpl implements RewardFetchService {
 
     @Override
     public RewardByReasonMonthDto fetchRewardByReasonMonth(String userId, int year, int month) {
+        validateMonth(month);
+
         String req = String.format("%d-%02d", year, month);
         CommonRes<RewardByReasonMonthDto> res = rewardClient.fetchRewardByReasonMonth(userId, req);
         if (res == null || res.getData() == null) {
@@ -163,6 +164,11 @@ public class RewardFetchServiceImpl implements RewardFetchService {
         }
         return res.getData();
     }
-    //</editor-folder desc="REWARD FOR REWARD REQUEST">
 
+    private void validateMonth(int month) {
+        if (month < 1 || month > 12) {
+            log.warn("Invalid month value: {}. Month must be between 1 and 12", month);
+            throw new RestApiException(ErrorCode. INVALID_INPUT_VALUE);
+        }
+    }
 }

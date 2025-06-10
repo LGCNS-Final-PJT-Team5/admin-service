@@ -1,5 +1,6 @@
 package com.modive.adminservice.api.user.dto.res;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 /**
@@ -20,5 +21,7 @@ public class UserListItem {
     private String joinedAt;
     private int driveCount;
     private int seedBalance;
+
+    @JsonProperty("isActive")
     private int isActive;
 }
