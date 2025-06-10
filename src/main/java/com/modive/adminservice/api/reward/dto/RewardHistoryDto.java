@@ -20,7 +20,7 @@ public class RewardHistoryDto {
     @AllArgsConstructor
     public static class RewardHistoryItem {
         private String rewardId;
-        //private String email;
+        private String userId;
         private String issuedDate;
         private String reason;
         private int amount;
