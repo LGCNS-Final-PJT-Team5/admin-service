@@ -9,10 +9,12 @@ import com.modive.adminservice.external.reward.dto.res.RCTotalRewardResData;
 import com.modive.adminservice.global.dto.res.CommonRes;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -24,6 +26,7 @@ import java.time.LocalDate;
 @Lazy
 @FeignClient(name="reward-service",
         url= "${service.reward.url}")
+
 public interface RewardClient {
 
     //REWARD FOR USER REQUEST

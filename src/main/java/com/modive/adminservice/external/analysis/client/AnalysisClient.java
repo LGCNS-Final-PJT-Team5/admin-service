@@ -20,6 +20,7 @@ import java.util.Map;
  * analysis-service와 통신하는 Feign Client.
  */
 
+
 @Lazy
 @FeignClient(name="analysis-service",
         url="${service.analysis.url}")
